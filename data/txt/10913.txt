@@ -1,0 +1,173 @@
+From: Kern Sibbald <kern <at> sibbald.com>
+Subject: Re:_catalog_backend_to_IBM_DB2
+Newsgroups: gmane.comp.sysutils.backup.bacula.devel
+Date: 2007-11-30 20:39:41 GMT (17 weeks, 1 day, 6 hours and 28 minutes ago)
+On Friday 30 November 2007 19:19, João Henrique Freitas wrote:
+> Hello,
+>
+> First, sorry for the long time without reply.
+>
+> I don't forgot this ideas. But now I have time to spend it and learn more
+> about Bacula devel.
+
+Nice.
+
+>
+> About one week back, I started some experiences about DB2 API and C/C++.
+> Read the src/cats/cats.h, src/cats/postgresql.c and various related files.
+> I understood what I need to do and how to do it.
+
+Nice.
+
+>
+> Ah, I convert the SQL script to DB2 too.
+>
+> About license GPL and DB2:
+>
+> IBM DB2 is a proprietary product and Bacula is free software how they can
+> stay togethers? I will use API DB2  (CLI ODBC). In DB2 license, there not
+> have any limit about developer and distributed the work.
+>
+> For example, if I compiling bacula with DB2, I will has DB2 client and
+> developers files installed. Or, if I distribute a rpm package of Bacula
+> (previous compiling with DB2 support) the server need have a DB2 client
+> installed.
+>
+>
+> What I want say is: I can developing with DB2 API and distribute my work
+> with GPL license and this work use a proprietary API to connect a DB2
+> database server. Somebody  has experience about this situation between
+> interaction GPL and proprietary APIs ?
+>
+> My intend is to only develop the backend to DB2 on Bacula and source code
+> (GPL) necessary to it.
+
+Yes, as you have noted, there *are* license problems with Bacula (GPLv2)
+interfacing to proprietary software.  There are a few solutions though, but
+I'll need to discuss this a bit with you offlist to get a good idea of what
+you are planning to do so in order to know if it is possible and to decide
+exactly how to do it.
+
+(By the way, I just last night, not having seen your email, discussed these
+kinds of problems with someone in the Free Software Foundation ...).
+
+>
+> Follow a text found in DB2 License IBM Data Server Driver for ODBC and CLI
+>
+> Redistribution Information
+>
+> If You have developed an application that is dependent upon the files or
+> modules listed below or located in the directory named below, You may
+> distribute these files or modules, subject to the following terms:
+> 1) The files or modules must be in object code.
+
+The above is very poor English coming from IBM.  I have no idea what it really
+means.  It either means that you may distribute the source files providing
+they are also in the object code, or it may mean that you may distribute the
+results of using those files in object form only.  I think you will need to
+get this point clarified.   Some of the files are obviously already in binary
+form, but there are other ones which are obviously not.
+
+> 2) You will indemnify IBM or third parties that provide IBM products
+> ("Third Parties") from and against any third party claim arising out of the
+> use or distribution of Your application.
+> 3) You may not use the same path name as the original files/modules.
+
+What does the above mean -- I cannot understand why such a restriction would
+be needed.
+
+> 4) You may not use IBM's or Third Parties' names or trademarks in
+> connection with the marketing of Your applications without IBM's or Third
+> Parties' prior written consent.
+
+Well, the above is a bit absurd.  It apparently says that you cannot use the
+name DB2 in "marketing" Bacula, which means that it is useless to develop a
+DB2 interface since we cannot say that we have a DB2 interface.
+
+> 5) IBM or Third Parties provide copies of these files or modules "AS IS,"
+> i.e., You are responsible for all technical assistance for Your
+> application. 6) In Your license agreement with the recipient, You will
+> notify the recipient that these files or modules may not be 1) used for any
+> purpose other than to enable the application, 2) copied (except for backup
+> purposes), 3) further distributed, or 4) reverse assembled, reverse
+> compiled, or otherwise translated.
+>
+> Unix/Linux:
+> db2trc
+> db2ldcfg
+> db2lddrg
+> db2level
+> db2cli.ini
+> 08501252.cnv
+> 12520850.cnv
+> IBM00850.ucs
+> IBM01252.ucs
+> ReadMe.txt
+> libicclib.so
+> libcrypto.so.0.9.7
+> db2admh.mo
+> db2adm.mo
+> db2clia1.lst
+> db2clias.lst
+> db2clih.mo
+> db2cli.mo
+> db2clit.mo
+> db2clp.mo
+> db2diag.mo
+> db2sqlh.mo
+> db2sql.mo
+> libdb2.a
+> libdb2.sl
+> libdb2.so
+> libdb2.so.1
+> IBMOSauthclient.a
+> IBMOSauthclient.sl
+> IBMOSauthclient.so
+> IBMOSauthclient.so.1
+
+I think we need to understand the above a bit better before continuing.  If
+you are writing something that work *only* on an IBM mainframe, then it is
+not very interesting to the Bacula community and you might not get approval
+from us to use Bacula with the above proprietary code.  On the other hand, if
+you are writing a Generic DB2 Bacula driver that would work on any platform
+that has DB2, then it would be quite interesting.
+
+Best regards,
+
+Kern
+
+>
+> On Sep 6, 2007 10:59 AM, David Boyes <dboyes <at> sinenomine.net> wrote:
+> > > > The motivation for the choice of IBM DB2 is not very especial. I
+> >
+> > need
+> >
+> > > > learning DB2 and currently work with it.
+> > > >
+> > > > So, before I spend more energy, what ours opinions about this?
+> >
+> > Great idea. There is a lot of interest in DB/2 in the commercial world,
+> > especially if you assume and test with z/OS DB/2 as the backend
+> > database. The combination of Bacula on Linux for Z and the DB/2 on z/OS
+> > is a very compelling argument for enterprise deployment.
+> >
+> > If you don't have a z/OS system handy, talk to me offlist and I can put
+> > you in touch with some people at IBM who can make development resources
+> > available. Failing that, UDB on Linux for Z would be a good choice, and
+> > there is a UDB Community Edition release for that platform (as well as
+> > Intel and POWER).
+> >
+> > > - read and understand the code of the different catalog backends.
+> > > - start with one of the existing catalog backends - SQLite, MySQL,
+> > > PostgreSQL - and start migrating it to DB2 SQL.
+> >
+> > I did a little bit of looking at this a while back. Pay very close
+> > attention to the Postgres back end; Postgres is very similar in behavior
+> > and manner to DB/2 (both are picky about standards compliance, and have
+> > a lot of the same quirks).
+> >
+> > I have a lot of DB/2 types around here; I can probably help you with
+> > queries.
+> >
+> >
+> > -------------------------------------------------------------------------

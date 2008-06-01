@@ -1,0 +1,90 @@
+From: Kern Sibbald <kern <at> sibbald.com>
+Subject: Re:_libdbi_backend_to_catalog_database
+Newsgroups: gmane.comp.sysutils.backup.bacula.devel
+Date: 2008-02-23 09:06:54 GMT (6 weeks, 11 hours and 40 minutes ago)
+On Saturday 23 February 2008 03.07:05 João Henrique Freitas wrote:
+> Very good notice
+>
+> On Fri, Feb 22, 2008 at 2:42 PM, Kern Sibbald <kern <at> sibbald.com> wrote:
+> > Hello João,
+> >
+> >  I had a few problems integrating your patch into the SVN trunk, but it
+> > is now in, and I would appreciate it if you could test it to make sure it
+> > got in correctly.
+> >
+> >  Things that are different:
+> >  - Most of your changes to autoconf/config.h.in failed, but I think the
+> >   essential ones got in.
+> >  - Some of your changes to configure.in were rejected, but it seems to
+> >   be OK.
+>
+> Really, autoconf/config.h and configure.in is two files much boring to
+> do. But I need read and learning more about this.
+
+Yes, it is boring and insanely complicated. It took me more than 3 years
+before I felt reasonably comforatble modifying it ...
+
+>
+> >  - You had included changes to cats.h and sql.c that I aready had in the
+> > svn so they caused failures.
+>
+> Yes, in svn (sql.c and cats.h) SQL_TYPE_POSTGRE. I changed to
+> SQL_TYPE_POSTGRESQL. Nothing more.
+
+Those changes were lost due to the fact that the patch was based an old
+version of the code.  However, I have put it back.
+
+>
+> >  - I had to turn off the change that you made to dird/bacula-dir.conf.in,
+> > since your change would probably break the default behavior, and would be
+> > a bit confusing to most users.
+>
+> Ok
+>
+> >  - I had to move the port option from -p to -t.  You cannot simply change
+> > the meaning of an option -- that could break users scripts, even though
+> > the -p option is not often used.  In addition, the -p is used in other
+> > programs to have the same meaning.  If necessary we can discuss changing
+> > this, but we need to look at it carefully.
+>
+> No problem.
+>
+> >  I have run the regression scripts using MySQL here, and it works, now I
+> > am running the full tape regression tests, but all seems OK -- that is
+> > nothing is broken.  I haven't yet tried to configure or run a dbi driver.
+> >   Hopefully I can get to that next week.
+> >
+> >  Thanks for all the hard work.  Please take a look at how the code went
+> > in, and tomorrow I will take a look at your list of questions or
+> > remaining things to be done ...
+>
+> In svn trunk, everything is Ok. compiling and run without problems.
+>
+> >  > The following itens need some work or review:
+> >  >
+> >  > 1- Implement bath insert with dbi
+>
+> Now, I will starting this item.
+
+Yes, this is a bit complicated, but it is an important item for performance.
+If you want to understand better how it works, you can read the document:
+
+ docs/techlogs/batch_insert_documentation.odt
+
+>
+> >  > 2- Review the options ./configure --with-dbi
+
+What needs reviewing here?
+
+> >  > 3- To solve/review the make install when ./configure --with-dbi.
+> >  > Currently,the database scripts don't  is installed on system by make
+> >  > install command.
+
+Can you explain the make install problem a bit more?  i.e. exactly what
+scripts need to be installed?
+
+> >  > 4- Review in bscan patchs
+> >  > 5- Documentation to install, configure and compiling bacula and libdbi
+
+Kern
+

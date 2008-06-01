@@ -1,0 +1,37 @@
+From: Dan Langille <dan <at> langille.org>
+Subject: Re:_libdbi_backend_to_catalog_database
+Newsgroups: gmane.comp.sysutils.backup.bacula.devel
+Date: 2008-02-01 23:55:35 GMT (8 weeks, 1 day, 3 hours and 13 minutes ago)
+David Boyes wrote:
+>> Kern> When the Bacula drivers become shared objects, Bacula will be
+>> Kern> capable of working with multiple different database types
+>> Kern> simultaneously so any new implementation should include that
+>> Kern> possibility.
+>
+> I wish you luck in supporting it -- you're going to need it.
+>
+> I think the problems of using multiple databases for Bacula internals
+> and supporting multiple types of database clients are substantially
+> different, and if you want to support multiple types of databases for
+> the internals you'll either need to federate the disparate databases
+> into one view, or pick one for Bacula's internal use and stick with it.
+> I think there are serious integrity problems that you'll need to solve
+> if you want to use federated databases for Bacula internals (eg,
+> holographic table storage, and you'll need to deal with some really hard
+> failure scenarios that Just Aren't Worth It).
+
+I have no idea what you are talking about.  :)
+
+Bacula now has the ability to use multiple Catalogs.  At present, all of
+the Catalogs must be of the same type (e.g. PostgreSQL).  I read what Kern
+said as allowing each Catalog to be a different database type (e.g. one of
+PostgreSQL, another of MySQL).
+
+A Catalog is a totally self-contained entity.  Data is not shared across
+Catalogs.
+
+--
+Dan Langille - http://www.langille.org/
+BSDCan - The Technical BSD Conference: http://www.bsdcan.org/
+PGCon  - The PostgreSQL Conference:    http://www.pgcon.org/
+

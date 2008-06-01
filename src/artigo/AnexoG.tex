@@ -1,0 +1,59 @@
+% Copyright (c) 2008, João Henrique Ferreira de Freitas
+% All rights reserved.
+% 
+% Redistribution and use in source and binary forms, with or without modification,
+% are permitted provided that the following conditions are met:
+% 
+%     * Redistributions of source code must retain the above copyright notice,
+%       this list of conditions and the following disclaimer.
+%     * Redistributions in binary form must reproduce the above copyright notice,
+%       this list of conditions and the following disclaimer in the documentation and/or 
+%       other materials provided with the distribution.
+%     * Neither the name of the <ORGANIZATION> nor the names of its contributors may
+%       be used to endorse or promote products derived from this software without 
+%       specific prior written permission.
+% 
+% THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY 
+% EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+% OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
+% SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+% SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
+% OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+% HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+% OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+% SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+% 
+% $Id$
+
+\section{Anexo F: Sobre o projeto libdbi} \label{sec:anexog}
+
+O projeto libdbi \url{http://libdbi.sourceforge.net} visa a implementação de uma camada de abstração em C para banco de dados. A idéia principal é a utilização de uma camada genérica de código que pode tratar múltiplos acessos a vários bancos de dados simultâneamente. 
+
+A licença utiliza pela libdbi, incluindo os drivers de acesso para os seguintes bancos de dados: Firebird/Interbase, FreeTDS (MS SQL), MySQL, SQLite/SQLite3, Postgresql, Ingres, Oracle, é a LGPL.
+
+Alguns pontos fortes nos quais foram fundamentais para a escolha da libdbi para a experiência foram: 
+
+\begin{description}
+ \item[Abstração do banco de dados]: a libdbi manipula todos os detalhes relacionados ao banco de dados. 
+ \item[Modularidade]: o usuário pode escolher qual banco de dados deseja apenas alterando uma simples configuração.
+ \item[Interface limpa]: possui uma excelente API de fácil entendimento e uma boa documentação da mesma. Facilitando a escrita do software para vários bancos de dados diferentes ao mesmo tempo.
+ \item[Driver interface]: possui recursos de carga de drivers para acesso a banco de dados dinâmicamente. Os drivers podem ser facilmente escritos e não necessitam de instalação especial.
+ \item[Conveniencia]: não nos preocupamos em escrever o software baseado em recursos de diretivas de compilação (\#define) como geralmente software com acesso a múltiplos bancos de dados fazem.
+ \end{description}
+
+\subsection{Interação com o projeto Bacula}
+
+Quando iniciamos o desenvolvimento para adicionar uma camada de abstração para acesso a banco de dados no projeto Bacula, tinhamos a necessidade de encontrar uma biblioteca já pronta para usar, aderente a uma licença não restritiva, madura e estável. Após algumas pesquisas, encontramos a biblioteca libdbi com todos os requisitos desejados.
+
+O primeiro passo foi verificar a estabilidade. Questionando a base de usuários e desenvolvedores, no qual nos esclareceu diversas dúvidas sobre o produto. Em seguida fizemos algumas explorações arquiteturais e testes com a biblioteca com objetivos de aprender os conceitos. A última etapa foi usá-la no desenvolvimento do patch para o Bacula.
+
+Diversas necessidades surgiram durante o desenvolvimento da integração com o Bacula, alguns exemplos abaixo, e foram sanadas ao longo do ciclo de desenvolvimento:
+
+\begin{itemize}
+ \item Correções em funções de retorno de erro nas quais em determinadas ocasiões não era possível obter o resultado da última operação executada no banco de dados (Revisão 1.78 \url{libdbi/src/dbi_main.c});
+ \item Inicialmente, até a versão 0.8.3 a biblioteca libdbi possuia funções para fazer o escape de querys no banco de dados. Entretanto as funções de escape adicionavam aspas simples no início da string e no final. Este comportamento não era desejado pois o Bacula fazia a inserção de aspas simles nas strings. Após algumas investigações, escrita de patchs para as funções desejadas e discussão com desenvolvedores, foi integrado no repositório CVS as melhorias referentes a não adicionar o símbolo de aspas simples após a string ser \textit{escapada} (Revisão 1.79 \url{libdbi/src/dbi_main.c});
+ \item Mudança de conceitos relacionados ao instânciamento de conexões com banco de dados dentro da biblioteca libdbi. Esta mudança ofereceu suporte necessário para utilização de vários bancos de dados ao mesmo tempo. Inicialmente não haviamos detectado problemas com o antigo conceito utilizado pela libdbi. As mudanças foram feitas por outros desenvolvedores externos a libdbi e integradas ao projeto (Revisão 1.81 \url{libdbi/src/dbi_main.c});
+ \item Um outro ponto foi o suporte a utilização de funções específicas do banco de dados e não contempladas pela libdbi. Como por exemplo: construções de insert com o comando COPY do Postgresql\footnote{\url{http://www.postgresql.org/docs/8.2/interactive/libpq-copy.html}}. Até a versão 1.0.0 da libdbi não era possível. Após investigações e discussões conseguimos fazer funcionar o suporte a funções específicas dentro da libdbi (Revisão 1.82 \url{libdbi/src/dbi_main.c} e Revisão 1.57 \url{libdbi-drivers/drivers/pgsql/dbd_pgsql.c}), dando suporte ao recursos conhecido, no projeto Bacula, como \textit{batch insert}.
+\end{itemize}
+
+Enfim, utilizar a biblioteca libdbi no projeto Bacula poupou várias horas de desenvolvimento, análise de problemas. Além do suporte, desejado, a vários bancos de dados diferentes em uma única implementação.

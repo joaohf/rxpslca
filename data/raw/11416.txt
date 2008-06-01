@@ -1,0 +1,94 @@
+From: Kern Sibbald <kern <at> sibbald.com>
+Subject: Re:_libdbi_backend_to_catalog_database
+Newsgroups: gmane.comp.sysutils.backup.bacula.devel
+Date: 2008-02-24 20:02:59 GMT (5 weeks, 6 days and 44 minutes ago)
+Hello João,
+
+On Sunday 24 February 2008 20.43:54 João Henrique Freitas wrote:
+> Hello,
+>
+> >  > >  > 2- Review the options ./configure --with-dbi
+> >
+> >  What needs reviewing here?
+> >
+> >  > >  > 3- To solve/review the make install when ./configure --with-dbi.
+> >  > >  > Currently,the database scripts don't  is installed on system by
+> >  > >  > make install command.
+> >
+> >  Can you explain the make install problem a bit more?  i.e. exactly what
+> >  scripts need to be installed?
+>
+> Yes,
+>
+> Traditionaly, if I need install Bacula with mysql, I do:
+> ./configure --with-mysql; make; make install
+>
+> And in my /etc/bacula/ some scripts has installed to create the
+> databases like make_bacula_tables or create_bacula_databases.
+>
+> But if I need libdbi, make don't install any scripts. Think about this
+> I don't found a good solution.
+>
+> Make install do not install any scripts or them install every script
+> to all supported  database, like mysql and postgresql and in
+> /etc/bacula we will found:
+>
+> create_mysql_database
+> create_postgresql_database
+> drop_mysql_database
+> drop_postgresql_database
+> drop_mysql_tables
+> drop_postgresql_tables
+> .....
+
+Yes, even when it installs all the scripts, they are only configured for one
+database [:-(]
+
+>
+> And the user choice what script need to run.
+>
+> Maybe in configure script is the better create a second option to use
+> in conjunction --with-dbi option. Like --with-dbd, if the user enter
+> --with-dbd=mysql, the scripts for mysql will be installaed. If not
+> enter the --with-dbd every scripts for all databases can be installed
+> or nothing scripts is installed.
+
+I think you should add a new configure option:
+
+  --with-dbi-driver=xxx
+
+this will be a bit complicated, because you will need to check if xxx is one
+of our supported databases, then find the path to the program so that it can
+be properly put into the scripts so that the tables will be created.
+You need to set two variables for substitution:
+
+   SQL_BINDIR       points to directory where binary program resides
+   DB_TYPE           the name of the binary program (e.g. pgres, mysql, ...)
+
+Once you have defined those two substitution variables in configure.in,
+everything should work correctly.
+
+Please see <bacula-source>/autoconf/bacula-macros/db.m4 for how SQL_BINDIR is
+defined.   I see that you have set DB_TYPE to dbi, but you will need to set
+it to the underlying database program name (it is a poorly named variable).
+It should be called DB_PROG.
+
+I hope that helps.
+
+Best regards,
+
+Kern
+
+>
+> That is my doubt.
+>
+> >  > >  > 4- Review in bscan patchs
+>
+> You anwser my question in past mail
+>
+> >  > >  > 5- Documentation to install, configure and compiling bacula and
+> >  > >  > libdbi
+>
+> In progress..
+>
+> -------------------------------------------------------------------------

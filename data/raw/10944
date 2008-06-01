@@ -1,0 +1,154 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+  <head>
+    <title>Gmane -- Mail To News And Back Again</title>
+    <link href="http://gmane.org/img/gmane.css" rel="stylesheet" type="text/css">
+    <link rel="SHORTCUT ICON" href="http://gmane.org/favicon.ico">
+</head>
+<body bgcolor=white text=black class=main>
+  <table cellpadding=5 cellspacing=10 class="main">
+  <tr valign=top>
+  <td class="maintd">
+  <div class="tdiv">
+  <div>
+  <a href="http://gmane.org/">Home</a><br>
+  <a href="http://dir.gmane.org/">Reading</a><br>
+  <a href="http://search.gmane.org">Searching</a><br>
+  <a href="http://gmane.org/subscribe.php">Subscribe</a><br>
+  <a href="http://gmane.org/sponsors.php">Sponsors</a><br>
+  <a href="http://gmane.org/stats.php">Statistics</a><br>
+  <a href="http://gmane.org/post.php">Posting</a><br>
+  <a href="http://gmane.org/contact.php">Contact</a><br>
+  <a href="http://gmane.org/spam-control.php">Spam</a><br>
+  <a href="http://gmane.org/find.php">Lists</a><br>
+  <a href="http://gmane.org/links.php">Links</a><br>
+<a href="http://gmane.org/about.php">About</a><br>
+<a href="http://gmane.org/host.php">Hosting</a><br>
+<a href="http://gmane.org/filter.php">Filtering</a><br>
+<a href="http://gmane.org/features.php">Features</a>
+<a href="http://gmane.org/dist.php">Download</a><br>
+<a href="http://gmane.org/logo.php">Marketing</a><br>
+<a href="http://gmane.org/import.php">Archives</a><br>
+<a href="http://weaver.gmane.org/">Weaver</a><br>
+  <a href="http://gmane.org/faq.php">FAQ</a><br>
+  &nbsp;<br>
+  </div>
+  <div class="ltd">
+  <!-- <img src="http://gmane.org/img/gmane-25.png" width=25 height=25 alt="Gmane"> -->
+  </div>
+  </div>
+  </td>
+  <td align=center class="maintd">
+  <a href="http://gmane.org/"><img src="http://gmane.org/img/gmane-rot.png" alt="Gmane" border=0></a>
+  </td>
+  <td class="bodytd">  
+<div class="headers">
+<div class="face">
+<a target="_top" href="http://ftp.cs.indiana.edu/pub/faces/picons/"><img border=0 alt="Picon" src="http://cache.gmane.org//gmane/comp/sysutils/backup/bacula/devel/10944-picon-001.gif"></a>
+</div>
+From: João Henrique Freitas &lt;joaohf &lt;at&gt; gmail.com&gt;<br>
+Subject: <a target="_top" rel="nofollow" href="http://news.gmane.org/find-root.php?message_id=%3c88e33d220712030406w61ab85f5gc0d243d687a42072%40mail.gmail.com%3e">Re: catalog backend to IBM DB2</a><br>
+Newsgroups: <a href="http://news.gmane.org/gmane.comp.sysutils.backup.bacula.devel" target="_top">gmane.comp.sysutils.backup.bacula.devel</a><br>
+Date: 2007-12-03 12:06:44 GMT
+ (16 weeks, 5 days, 15 hours and 1 minute ago)<br></div>
+<p>
+<div>
+<br>Ok,<br><br>Discussion about license is much serious and do not can have any mistakes.<br><br>I will search about license between DB2 and Bacula. When take some result, I post here.<br><br>Kern, my intentions is to do this work to run in any platform not only for mainframe.
+<br><br>Thanks<br><br><div class="gmail_quote">On Dec 1, 2007 9:28 AM, Kern Sibbald &lt;<a href="mailto:kern &lt;at&gt; sibbald.com">kern &lt;at&gt; sibbald.com</a>&gt; wrote:<br><blockquote class="gmail_quote">
+<div>
+<div></div>
+<div class="Wj3C7c">On Friday 30 November 2007 22:16, David Boyes wrote:<br>&gt; &gt; &gt; Redistribution Information<br>&gt; &gt; &gt;<br>&gt; &gt; &gt; If You have developed an application that is dependent upon the files
+<br>&gt; &gt; &gt; or modules listed below or located in the directory named below, You<br>&gt; &gt; &gt; may distribute these files or modules, subject to the following terms:<br>&gt; &gt; &gt; 1) The files or modules must be in object code.
+<br>&gt; &gt;<br>&gt; &gt; The above is very poor English coming from IBM. &nbsp;I have no idea what it<br>&gt; &gt; really<br>&gt; &gt; means.<br>&gt;<br>&gt; IANAL, however what this usually means when talking to IBM is that you can
+<br>&gt; compile and distribute modules based on these source files, but you cannot<br>&gt; distribute any source of the IBM-supplied bits itself. If the modules are<br>&gt; distributed from IBM in binary form only, you cannot include them in your
+<br>&gt; package other than by reference via dynamic linking.<br>&gt;<br>&gt; &gt; &gt; 2) You will indemnify IBM or third parties that provide IBM products<br>&gt; &gt; &gt; ("Third Parties") from and against any third party claim arising out of
+<br>&gt; &gt;<br>&gt; &gt; the<br>&gt; &gt;<br>&gt; &gt; &gt; use or distribution of Your application.<br>&gt;<br>&gt; Usual "we didn't make it, not our fault" clause.<br>&gt;<br>&gt; &gt; &gt; 3) You may not use the same path name as the original files/modules.
+<br>&gt; &gt;<br>&gt; &gt; What does the above mean -- I cannot understand why such a restriction<br>&gt; &gt; would<br>&gt; &gt; be needed.<br>&gt;<br>&gt; It means you can't create something that replaces the IBM distributed files
+<br>&gt; and call it DB/2 UDB Client. Also, on AIX, you're expected to register the<br>&gt; pathname where your stuff goes with IBM if you expect it to go into<br>&gt; /usr/lpp with all the other IBM-supplied stuff. They do this to minimize
+<br>&gt; conflicts between file locations, and incidentally, to force their own<br>&gt; developers to keep the files for a single product in one place (rather than<br>&gt; scattering them around the filesystem like Microsoft or CA is wont to do).
+<br>&gt;<br>&gt; &gt; &gt; 4) You may not use IBM's or Third Parties' names or trademarks in<br>&gt; &gt; &gt; connection with the marketing of Your applications without IBM's or<br>&gt; &gt;<br>&gt; &gt; Third
+<br>&gt; &gt;<br>&gt; &gt; &gt; Parties' prior written consent.<br>&gt; &gt;<br>&gt; &gt; Well, the above is a bit absurd. &nbsp;It apparently says that you cannot use<br>&gt; &gt; the<br>&gt; &gt; name DB2 in "marketing" Bacula, which means that it is useless to develop
+<br>&gt; &gt; a<br>&gt; &gt; DB2 interface since we cannot say that we have a DB2 interface.<br>&gt;<br>&gt; They have to have this in the agreement or THEY lose the ability to<br>&gt; prosecute if someone *does* hijack the trademark. They have to enforce the
+<br>&gt; trademark or lose the right to it entirely. See Kleenex/Jello/Xerox<br>&gt; machine/etc.<br>&gt;<br>&gt; There are a set of rules for using the DB/2 trademark published on the IBM<br>&gt; WWW site, and if you register as a one of their developers, in exchange you
+<br>&gt; get limited rights to reference the trademarks according to the rules.<br>&gt; They're not onerous; it comes down to you just have to spell it correctly<br>&gt; and not cause them grief about what you do with it.
+<br>&gt;<br>&gt; &gt; &gt; 5) IBM or Third Parties provide copies of these files or modules "AS<br>&gt; &gt;<br>&gt; &gt; IS,"<br>&gt; &gt;<br>&gt; &gt; &gt; i.e., You are responsible for all technical assistance for Your
+<br>&gt; &gt; &gt; application. 6) In Your license agreement with the recipient, You will<br>&gt; &gt; &gt; notify the recipient that these files or modules may not be 1) used for<br>&gt; &gt;<br>&gt; &gt; any<br>&gt; &gt;
+<br>&gt; &gt; &gt; purpose other than to enable the application, 2) copied (except for<br>&gt; &gt;<br>&gt; &gt; backup<br>&gt; &gt;<br>&gt; &gt; &gt; purposes), 3) further distributed, or 4) reverse assembled, reverse<br>
+&gt; &gt; &gt; compiled, or otherwise translated.<br>&gt;<br>&gt; Not our fault, not our fault, not our fault, and if somebody misuses your<br>&gt; product to do something illegal, then it's still your fault. Welcome to
+<br>&gt; American IP law.<br>&gt;<br>&gt; *gag*<br><br>
+</div>
+</div>Well, all the above seem to have some solution or workaround, but it will take<br>a bit of organization.<br><div class="Ih2E3d">
+<br>&gt;<br>&gt; &gt; I think we need to understand the above a bit better before continuing.
+<br>&gt; &gt; If<br>&gt; &gt; you are writing something that work *only* on an IBM mainframe, then it<br>&gt; &gt; is not very interesting to the Bacula community and you might not get<br>&gt; &gt; approval<br>&gt; &gt; from us to use Bacula with the above proprietary code. &nbsp;On the other
+<br>&gt; &gt; hand, if<br>&gt; &gt; you are writing a Generic DB2 Bacula driver that would work on any<br>&gt; &gt; platform<br>&gt; &gt; that has DB2, then it would be quite interesting.<br>&gt;<br>&gt; The DB/2 client code he's working with uses an IP socket connection to talk
+<br>&gt; to a DB/2 server. It doesn't care what platform DB/2 actually runs on<br>&gt; (albeit the client is supported on a subset of the platforms that Bacula<br>&gt; runs on).<br>&gt;<br><br>
+</div>Well, linking Bacula to a shared object that is proprietary, or using header
+<br>files in Bacula which are proprietary would be clearly a violation of the<br>GPL, so be careful what you are getting yourselves into. &nbsp;License violations<br>are not much fun for the person(s) violating the license -- especially
+<br>because by properly working with the project up front, you can avoid<br>problems.<br><br>Using all GPLed code inside of Bacula and in any shared objects that Bacula<br>references, then using a socket to talk to a proprietary DB2 engine, may be
+<br>permitted under the GPL (I am not 100% sure as there seem to be some<br>differences of opinion).<br><br>-------------------------------------------------------------------------<br>SF.Net email is sponsored by: The Future of Linux Business White Paper
+<br>from Novell. &nbsp;From the desktop to the data center, Linux is going<br>mainstream. &nbsp;Let it simplify your IT future.<br><a href="http://altfarm.mediaplex.com/ad/ck/8857-50307-18918-4" target="_blank">http://altfarm.mediaplex.com/ad/ck/8857-50307-18918-4
+</a><br><div>
+<div></div>
+<div class="Wj3C7c">_______________________________________________<br>Bacula-devel mailing list<br><a href="mailto:Bacula-devel &lt;at&gt; lists.sourceforge.net">Bacula-devel &lt;at&gt; lists.sourceforge.net</a><br><a href="https://lists.sourceforge.net/lists/listinfo/bacula-devel" target="_blank">
+https://lists.sourceforge.net/lists/listinfo/bacula-devel</a><br>
+</div>
+</div>
+</blockquote>
+</div>
+<br><br clear="all"><br>-- <br>-------------------------------------------------------------<br>Jo&atilde;o Henrique Freitas - joaohf_at_gmail.com
+<br>Americana-SP-Brasil<br>BSD051283<br>LPI 1<br><a href="http://paginas.terra.com.br/informatica/joaohf">http://paginas.terra.com.br/informatica/joaohf</a><br><a href="http://www.livejournal.com/users/joaohf/">http://www.livejournal.com/users/joaohf/
+</a>
+</div>
+<pre>
+-------------------------------------------------------------------------
+SF.Net email is sponsored by: The Future of Linux Business White Paper
+from Novell.  From the desktop to the data center, Linux is going
+mainstream.  Let it simplify your IT future.
+<a rel="nofollow" href="http://altfarm.mediaplex.com/ad/ck/8857-50307-18918-4" target="_top">http://altfarm.mediaplex.com/ad/ck/8857-50307-18918-4</a></pre>
+<pre>
+_______________________________________________
+Bacula-devel mailing list
+Bacula-devel &lt;at&gt; lists.sourceforge.net
+<a rel="nofollow" href="https://lists.sourceforge.net/lists/listinfo/bacula-devel" target="_top">https://lists.sourceforge.net/lists/listinfo/bacula-devel</a>
+</pre>
+<script type="text/javascript">
+document.domain = 'gmane.org';
+document.title = 'Re: catalog backend to IBM DB2';
+</script>
+<td rowspan=2 class="listid">
+<a href="http://dir.gmane.org/gmane.comp.sysutils.backup.bacula.devel">
+<img border=0 src="http://gmane.org/paint-list-id.php?group=gmane.comp.sysutils.backup.bacula.devel">
+</a>
+</td> 
+</td>
+</tr>
+<tr>
+<td class="bads" colspan=2>
+&nbsp;
+<!--
+Get rid of ads<br><a href="http://gmane.org/donate.php">Donate to Gmane</a>
+-->
+</td>
+<td class="maintd" colspan=1 align=left>
+<script type="text/javascript"><!--
+google_ad_client = "pub-5884878215917141";
+google_alternate_ad_url = "http://gmane.org/blank.php";
+google_ad_width = 728;
+google_ad_height = 90;
+google_ad_format = "728x90_as";
+google_ad_channel ="";
+google_page_url = document.location;
+google_color_border = "FFFFFF";
+google_color_bg = "FFFFFF";
+google_color_link = "002390";
+google_color_url = "000000";
+google_color_text = "000000";
+//--></script>
+<script type="text/javascript"
+  src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script>
+  </td>
+  </tr>
+  </table>
+  </body>
+</html>

@@ -1,0 +1,62 @@
+From: Kern Sibbald <kern <at> sibbald.com>
+Subject: Re:_catalog_backend_to_IBM_DB2
+Newsgroups: gmane.comp.sysutils.backup.bacula.devel
+Date: 2007-12-10 14:45:00 GMT (15 weeks, 5 days, 12 hours and 23 minutes ago)
+Hello João,
+
+This is a very good way to do it.  Thanks.
+
+Good luck.
+
+Kern
+
+On Monday 10 December 2007 14:33, João Henrique Freitas wrote:
+> Hello
+>
+> I forgot the DB2, I agree that is not a good idea implement the driver
+> direct on Bacula code (license problems).
+>
+> But we have a way (already proposed initially by Kern and now by David). We
+> can use the libdbi (http://libdbi.sourceforge.net/) to do the work and
+> perhaps the project "Item 34: Commercial database support Origin: Russell
+> Howe Date: 26 July 2006" listed on http://www.bacula.org/?page=projects,
+> will be done.
+>
+> I started some experiments with libdbi, following:
+>
+> 1. Test the framework libdbi. Understand how they work and limitations
+> 2. Code in Bacula the drivers for libdbi interfacing with the databases
+> supported by libdbi
+> 3. Create the a libdbi driver for DB2 (and others databases too)
+>
+> The motivations to use libdbi, are:
+>
+> LGPL license
+> Database-independent abstraction layer in C
+> Multiple databases
+>
+> If anybody has any questions, please do it.
+>
+> Important: this idea not discard the already interfacing drivers already
+> coded in Bacula, but one way to use proprietary databases and connectivity
+> API in Bacula.
+>
+> Thanks
+>
+> > > Perl DBI is not ODBC. It's a set of wrapper functions that allow
+> > > database-independent code to be written, with the actual database used
+> > > being selected at runtime by configuring the DBI interface code.
+> > > Database vendors supply drop-in back-ends (some open, some not), but no
+> > > code linkage occurs that is not open.
+> >
+> > Very interesting.  It sounds like something that would be well worth
+> > looking
+> > at providing we can interface to it from C (or C++) as I imagine is the
+> > case.
+> >
+> >
+> >
+> >
+> >
+> >
+> > -------------------------------------------------------------------------

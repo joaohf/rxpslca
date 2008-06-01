@@ -1,0 +1,57 @@
+From: João Henrique Freitas <joaohf <at> gmail.com>
+Subject: libdbi_backend_to_catalog_database
+Newsgroups: gmane.comp.sysutils.backup.bacula.devel
+Date: 2008-02-01 01:03:31 GMT (8 weeks, 2 days, 2 hours and 5 minutes ago)
+Hello,
+
+This is a status report of the work to implement libdbi in Bacula.
+
+In my tests *All regression tests running*. Now I fix some things
+after post the code here.
+
+I have a design problem:
+
+The libdbi API need know what dbms we want to use and load the correct
+driver. For exemple mysql, pgsql, sqlite3, etc...
+
+Actually, in mysql.c, postgresql.c and dbi.c the scope of funcion
+db_init_database is:
+
+ B_DB *
+db_init_database(JCR *jcr, const char *db_name, const char *db_user,
+const char *db_password,
+                 const char *db_address, int db_port, const char *db_socket,
+                 int mult_db_connections)
+
+Is possible to add one more argument like char *db_type, this indicate
+what driver libdbi will use?. So Bacula uses db_init_database  in
+various places... and need to change them too.
+
+OR
+
+The argument char *db_name would be: mysql:bacula where mysql indicate
+a driver to libdbi and bacula is the name of database.
+
+Like this in bacula-dir.conf:
+
+Catalog {
+  Name = MyCatalog
+  dbaddress = 127.0.0.1; dbport = 5432; dbname = "mysql:bacula"; user
+= bacula; password = "bacula"
+}
+
+On db_init_database, we split db_name and everything will be done
+right without change in others places of the code.
+
+I don't want to change others places of Bacula. What is the best solution?
+
+Thanks
+
+--
+-----------------------------------------------------------
+João Henrique Freitas - joaohf_at_gmail.com
+Campinas-SP-Brasil
+BSD051283
+LPI 1
+http://joaohf.pbwiki.com
+http://www.livejournal.com/users/joaohf/

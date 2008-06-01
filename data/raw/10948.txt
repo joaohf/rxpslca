@@ -1,0 +1,41 @@
+From: David Boyes <dboyes <at> sinenomine.net>
+Subject: Re:_catalog_backend_to_IBM_DB2
+Newsgroups: gmane.comp.sysutils.backup.bacula.devel
+Date: 2007-12-03 19:19:12 GMT (16 weeks, 5 days, 7 hours and 49 minutes ago)
+
+> OK, that is good.  After that the most important thing is to
+understand
+> *exactly* what files Bacula will need to be able to build the Bacula
+DB2
+> driver and what their license is.
+> <snip>
+> The other critical issue is the availability of those files: that is
+can
+> anyone get them, or are they available only to certain people and
+under
+> what
+> conditions.
+
+The files he needs are part of the DB/2 Client Development kit, which
+are part of DB/2. If you legitimately have DB/2 UDB or DB/2 for z/OS,
+you have them. If you don't, then you don't, and you can't get them any
+other way. You'd also have to take into consideration what platforms
+support DB/2 -- DB/2 isn't on all the platforms Bacula runs on, which
+will cause problems.
+
+Sounds like it might be smarter to implement a Bacula interface to the
+Perl DBI:: package interface, and then the problem is permanently
+solved, and not just for DB/2, but for just about any useful database
+that currently exists. That would give us Oracle, Ingres, DB/2, Sybase,
+etc w/o imposing other restrictions. There would be some restrictions on
+what SQL statements can be fed to the DBI interface, but Bacula doesn't
+do anything that fancy, so the restrictions would be fairly minor, IMHO.
+
+> The next thing that is not a requirement but is important is that any
+user
+> who
+> wants to get those files to build the DB2 driver should have access to
+> them.
+
+See above.
+

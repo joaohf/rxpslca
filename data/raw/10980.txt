@@ -1,0 +1,39 @@
+From: David Boyes <dboyes <at> sinenomine.net>
+Subject: Re:_catalog_backend_to_IBM_DB2
+Newsgroups: gmane.comp.sysutils.backup.bacula.devel
+Date: 2007-12-10 15:41:18 GMT (15 weeks, 5 days, 11 hours and 27 minutes ago)
+
+> But we have a way (already proposed initially by Kern and now by David). We
+can use the libdbi
+> ( http://libdbi.sourceforge.net/) to do the work
+Even better -- someone else already did the hard part..[8-)] Gluing this into
+Bacula will be fairly simple, as the database interaction is already fairly
+well abstracted into a C++ class.
+> 1. Test the framework libdbi. Understand how they work and limitations
+The major limitation is that if you want the SQL to work on multiple databases,
+then you have to use the lowest common denominator language level and features.
+There are places in Bacula where various things exploit "features" of the
+currently supported databases. The Postgres code is the most rabidly standards-
+compliant, so I'd start with that SQL and see if it just works out of the box
+(ie, if you deliver the stuff written for Postgress to DB/2, I suspect it will
+be more likely to work correctly than the MySQL code, which has a few local
+features).
+
+> 2. Code in Bacula the drivers for libdbi interfacing with the databases
+supported by libdbi
+See above. All the nasty parts are in the C++ class that abstracts the database
+access.
+
+> 3. Create the a libdbi driver for DB2 (and others databases too)
+DB/2, Sybase and Oracle already have one, and they're officially supported by
+the vendor. [8-)] Once you get the DBI layer in place, you can follow the
+directions provided with the database to enable the DBI driver they provide.
+
+> Important: this idea not discard the already interfacing drivers already
+coded in Bacula, but one way to use
+> proprietary databases and connectivity API in Bacula.
+
+On the other hand, there are MySQL and Postgres DBI drivers, too. I don't know
+about sqllite, but I wouldn't be heartbroken to see sqllite use fall off. It's
+not like MySQL or Postgres are *that* big of a PITA to implement and manage. Or
+someone could write a DBI driver for sqllite.

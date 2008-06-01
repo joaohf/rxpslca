@@ -1,0 +1,69 @@
+From: Kern Sibbald <kern <at> sibbald.com>
+Subject: Re:_libdbi_backend_to_catalog_database
+Newsgroups: gmane.comp.sysutils.backup.bacula.devel
+Date: 2008-02-24 20:59:20 GMT (5 weeks, 5 days, 23 hours and 48 minutes ago)
+On Sunday 24 February 2008 21.38:03 João Henrique Freitas wrote:
+> Thanks for explanations.
+>
+> I will think more about this and do some explorations.
+
+I haven't really looked at where DB_TYPE is used, but we might want to
+implement a DB_TYPE and a new DB_PROG variable so that we can keep your DBI
+type ...
+
+Kern
+
+PS: Don't hesitate to ask if you need help.  Modifying such varables or adding
+a new one is quite easy for me ...
+
+>
+> Thanks
+>
+> On Sun, Feb 24, 2008 at 5:24 PM, Jacek Konieczny <jajcus <at> jajcus.net>
+wrote:
+> > On Sun, Feb 24, 2008 at 09:02:59PM +0100, Kern Sibbald wrote:
+> >  > I think you should add a new configure option:
+> >  >
+> >  >   --with-dbi-driver=xxx
+> >  >
+> >  > this will be a bit complicated, because you will need to check if xxx
+> >  > is one of our supported databases, then find the path to the program
+> >  > so that it can be properly put into the scripts so that the tables
+> >  > will be created. You need to set two variables for substitution:
+> >  >
+> >  >    SQL_BINDIR       points to directory where binary program resides
+> >  >    DB_TYPE           the name of the binary program (e.g. pgres,
+> >  > mysql, ...)
+> >  >
+> >  > Once you have defined those two substitution variables in
+> >  > configure.in, everything should work correctly.
+> >
+> >  But then we loose part the flexibility which dbi gives us otherwise. I
+> >  always hated that database backend of bacula was configured
+> >  compile-time. This way it was impossible to create generic binary
+> >  packages with Bacula. So in the PLD (Linux distribution I make some
+> > packages for) we provide binary bacula packages with sqlite support (the
+> > worst backend, but with the least extra requirements like a server set
+> > up) and if anyone wanted something else he had to compile the packages
+> > manually with special options.
+> >
+> >  So, I was very happy when read about the DBI support. That would solve
+> >  the last Bacula problem bothering me. But the suggestion above would
+> >  break the thing again.
+> >
+> >  IMHO it should be possible to compile Bacula in a such way so it could
+> >  work with any database, depending only on the runtime configuration and,
+> >  maybe, simple manual database setup (calling the right scripts to
+> >  initialize the database).
+> >
+> >  I am sure that many Linux distribution will include usable Bacula
+> >  packages (not limited to single database engine like sqlite or mysql)
+> >  when multiple database support in Bacula will be ready.
+> >
+> >  Greets,
+> >         Jacek
+> >
+> >
+> >
+> >
+> > -------------------------------------------------------------------------

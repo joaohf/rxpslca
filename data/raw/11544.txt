@@ -1,0 +1,46 @@
+From: João Henrique Freitas <joaohf <at> gmail.com>
+Subject: Re:_libdbi_backend_to_catalog_database
+Newsgroups: gmane.comp.sysutils.backup.bacula.devel
+Date: 2008-03-12 11:15:21 GMT (3 weeks, 3 days, 9 hours and 32 minutes ago)
+Hello,
+
+I found some memory leaks in dbic.c. In regression tests, bacula
+always report buffers not release allocates in dbi.c after run tests.
+
+Comparing to postgresql.c I have some doubts.
+
+Every call of PQgetvalue is return to row[j] (like my_postgresql_fetch_row):
+
+  378          for (j = 0; j < mdb->num_fields; j++) {
+  379          mdb->row[j] = PQgetvalue(mdb->result, mdb->row_number, j);
+  380          Dmsg2(500, "my_postgresql_fetch_row field '%d' has
+value '%s'\n", j,      mdb->row[j]);
+  381       }
+
+When  my_postgresql_free_result() are call,  PQclean() release every
+data in row[j]:
+
+  532    if (mdb->result) {
+  533       PQclear(mdb->result);
+  534       mdb->result = NULL;
+  535    }
+
+Suppose, If PQclear not release nothing, how I can free mdb->row?
+(mdb->row is a array of pointers)
+
+In the case, libdbi don't free like PQclear() and I do a loop and free
+every position of mdb->row[j] and mdb->row too. Like this:
+
+if (mdb->row) {
+   # if mdb->num_fields are 18, release 18 pointers...
+   for( j = 0; j < mdb->num_fields; j++) {
+        free(mdb->row[j]);
+   }
+   free(mdb->row)
+   mdb->row = NULL;
+}
+
+This is the right way or has another way to free mdb->row?
+
+Thanks
+

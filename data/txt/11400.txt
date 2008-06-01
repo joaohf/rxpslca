@@ -1,0 +1,1216 @@
+From: João Henrique Freitas <joaohf <at> gmail.com>
+Subject: Re:_libdbi_backend_to_catalog_database
+Newsgroups: gmane.comp.sysutils.backup.bacula.devel
+Date: 2008-02-22 13:53:30 GMT (5 weeks, 1 day, 13 hours and 15 minutes ago)
+Hello
+
+Attached is the dbi patch for Bacula.
+
+To use, are necessary libdbi-0.8.3 and libdbi-drivers-0.8.3 and Bacula
+trunk code with ./configure --with-dbi
+
+Last, configuring bacula-dir.conf with:
+
+Catalog {
+ Name = MyCatalog
+ dbdriver = "dbi:postgresql"; dbport = 5432; dbaddress = 127.0.0.1
+ dbname = regress; user = regress; password = ""
+}
+
+dbdriver can be: dbi:mysql and dbi:postgresql. In the future can be
+all drivers supported by libdbi.
+
+The following itens need some work or review:
+
+1- Implement bath insert with dbi
+2- Review the options ./configure --with-dbi
+3- To solve/review the make install when ./configure --with-dbi.
+Currently,the database scripts don't  is installed on system by make
+install command.
+4- Review in bscan patchs
+5- Documentation to install, configure and compiling bacula and libdbi
+
+Any question I am available.
+
+Thanks
+Attachment_(dbi.c): text/x-csrc, 27 KiB
+Index: src/dird/bacula-dir.conf.in
+===================================================================
+--- src/dird/bacula-dir.conf.in	(revisÃ£o 6389)
++++ src/dird/bacula-dir.conf.in	(cÃ³pia de trabalho)
+@@ -231,6 +231,7 @@
+ # Generic catalog service
+ Catalog {
+   Name = MyCatalog
++  dbdriver = "dbi:mysql"; dbaddress = 127.0.0.1; dbport = 3306
+   dbname = @db_name@; user = @db_user@; password = ""
+ }
+
+Index: src/dird/ua_restore.c
+===================================================================
+--- src/dird/ua_restore.c	(revisÃ£o 6272)
++++ src/dird/ua_restore.c	(cÃ³pia de trabalho)
+@@ -582,7 +582,7 @@
+          len = strlen(ua->cmd);
+          fname = (char *)malloc(len * 2 + 1);
+          db_escape_string(ua->jcr, ua->db, fname, ua->cmd, len);
+-         Mmsg(rx->query, uar_file, rx->ClientName, fname);
++         Mmsg(rx->query, uar_file[db_type], rx->ClientName, fname);
+          free(fname);
+          gui_save = ua->jcr->gui;
+          ua->jcr->gui = true;
+@@ -896,14 +896,13 @@
+  */
+ static bool insert_dir_into_findex_list(UAContext *ua, RESTORE_CTX *rx, char
+*dir,
+                                         char *date)
+-{
++{
+    strip_trailing_junk(dir);
+    if (*rx->JobIds == 0) {
+       ua->error_msg(_("No JobId specified cannot continue.\n"));
+       return false;
+    } else {
+-      Mmsg(rx->query, uar_jobid_fileindex_from_dir, rx->JobIds,
+-           dir, rx->ClientName);
++      Mmsg(rx->query, uar_jobid_fileindex_from_dir[db_type], rx->JobIds, dir,
+rx->ClientName);
+    }
+    rx->found = false;
+    /* Find and insert jobid and File Index */
+@@ -1122,10 +1121,10 @@
+    /* Create temp tables */
+    db_sql_query(ua->db, uar_del_temp, NULL, NULL);
+    db_sql_query(ua->db, uar_del_temp1, NULL, NULL);
+-   if (!db_sql_query(ua->db, uar_create_temp, NULL, NULL)) {
++   if (!db_sql_query(ua->db, uar_create_temp[db_type], NULL, NULL)) {
+       ua->error_msg("%s\n", db_strerror(ua->db));
+    }
+-   if (!db_sql_query(ua->db, uar_create_temp1, NULL, NULL)) {
++   if (!db_sql_query(ua->db, uar_create_temp1[db_type], NULL, NULL)) {
+       ua->error_msg("%s\n", db_strerror(ua->db));
+    }
+    /*
+Index: src/dird/ua_prune.c
+===================================================================
+--- src/dird/ua_prune.c	(revisÃ£o 6067)
++++ src/dird/ua_prune.c	(cÃ³pia de trabalho)
+@@ -259,15 +259,17 @@
+
+ static bool create_temp_tables(UAContext *ua)
+ {
+-   int i;
+    /* Create temp tables and indicies */
+-   for (i=0; create_deltabs[i]; i++) {
+-      if (!db_sql_query(ua->db, create_deltabs[i], NULL, (void *)NULL)) {
+-         ua->error_msg("%s", db_strerror(ua->db));
+-         Dmsg0(050, "create DelTables table failed\n");
+-         return false;
+-      }
++   if (!db_sql_query(ua->db, create_deltabs[db_type], NULL, (void *)NULL)) {
++      ua->error_msg("%s", db_strerror(ua->db));
++      Dmsg0(050, "create DelTables table failed\n");
++      return false;
+    }
++   if (!db_sql_query(ua->db, create_delindex, NULL, (void *)NULL)) {
++       ua->error_msg("%s", db_strerror(ua->db));
++       Dmsg0(050, "create DelInx1 index failed\n");
++       return false;
++   }
+    return true;
+ }
+
+Index: src/cats/sql.c
+===================================================================
+--- src/cats/sql.c	(revisÃ£o 6067)
++++ src/cats/sql.c	(cÃ³pia de trabalho)
+@@ -1,7 +1,7 @@
+ /*
+    BaculaÂ® - The Network Backup Solution
+
+-   Copyright (C) 2000-2007 Free Software Foundation Europe e.V.
++   Copyright (C) 2000-2008 Free Software Foundation Europe e.V.
+
+    The main author of Bacula is Kern Sibbald, with contributions from
+    many others, a complete list can be found in the file AUTHORS.
+@@ -30,6 +30,8 @@
+  *
+  *     Almost generic set of SQL database interface routines
+  *      (with a little more work)
++ *     SQL engine specific routines are in mysql.c, postgresql.c,
++ *       sqlite.c, ...
+  *
+  *    Kern Sibbald, March 2000
+  *
+@@ -44,14 +46,52 @@
+ #include "bacula.h"
+ #include "cats.h"
+
+-#if    HAVE_SQLITE3 || HAVE_MYSQL || HAVE_SQLITE || HAVE_POSTGRESQL
++#if    HAVE_SQLITE3 || HAVE_MYSQL || HAVE_SQLITE || HAVE_POSTGRESQL ||
+HAVE_DBI
+
+ uint32_t bacula_db_version = 0;
+
++int db_type = -1;
++
+ /* Forward referenced subroutines */
+ void print_dashes(B_DB *mdb);
+ void print_result(B_DB *mdb);
+
++B_DB *db_init(JCR *jcr, const char *db_driver, const char *db_name, const char
+*db_user,
++              const char *db_password, const char *db_address, int db_port,
++              const char *db_socket, int mult_db_connections)
++{
++#ifdef HAVE_DBI
++   char *p;
++   if (!db_driver) {
++      Jmsg0(jcr, M_ABORT, 0, _("Driver type not specified in Catalog
+resource.\n"));
++   }
++   if (strlen(db_driver) < 5 || db_driver[3] != ':' || strncasecmp(db_driver,
+"dbi", 3) != 0) {
++      Jmsg0(jcr, M_ABORT, 0, _("Invalid driver type, must be \"dbi:
+<type>\"\n"));
++   }
++   p = (char *)(db_driver + 4);
++   if (strcasecmp(p, "mysql") == 0) {
++      db_type = SQL_TYPE_MYSQL;
++   } else if (strcasecmp(p, "postgresql") == 0) {
++      db_type = SQL_TYPE_POSTGRESQL;
++   } else if (strcasecmp(p, "sqlite") == 0) {
++      db_type = SQL_TYPE_SQLITE;
++   } else {
++      Jmsg1(jcr, M_ABORT, 0, _("Unknown database type: %s\n"), p);
++   }
++#elif HAVE_MYSQL
++   db_type = SQL_TYPE_MYSQL;
++#elif HAVE_POSTGRESQL
++   db_type = SQL_TYPE_POSTGRESQL;
++#elif HAVE_SQLITE
++   db_type = SQL_TYPE_SQLITE;
++#elif HAVE_SQLITE3
++   db_type = SQL_TYPE_SQLITE;
++#endif
++
++   return db_init_database(jcr, db_name, db_user, db_password, db_address,
++             db_port, db_socket, mult_db_connections);
++}
++
+ dbid_list::dbid_list()
+ {
+    memset(this, 0, sizeof(dbid_list));
+@@ -581,4 +621,4 @@
+ }
+
+
+-#endif /* HAVE_SQLITE3 || HAVE_MYSQL || HAVE_SQLITE || HAVE_POSTGRESQL*/
++#endif /* HAVE_SQLITE3 || HAVE_MYSQL || HAVE_SQLITE || HAVE_POSTGRESQL ||
+HAVE_DBI*/
+Index: src/cats/Makefile.in
+===================================================================
+--- src/cats/Makefile.in	(revisÃ£o 6067)
++++ src/cats/Makefile.in	(cÃ³pia de trabalho)
+@@ -11,7 +11,7 @@
+ # this dir relative to top dir
+ thisdir = src/cats
+
+-CPPFLAGS += -DBUILDING_CATS
++CPPFLAGS += -DBUILDING_CATS @DBI_DBD_DRIVERDIR@
+
+ DEBUG=@DEBUG@
+ MKDIR=$(topdir)/autoconf/mkinstalldirs
+@@ -25,16 +25,14 @@
+ SVRSRCS = cats.c sql.c
+ SVROBJS = cats.o sql.o
+
+-LIBSRCS = mysql.c bdb.c bdb_create.c bdb_get.c bdb_update.c \
+-	  bdb_delete.c bdb_find.c bdb_list.c \
++LIBSRCS = mysql.c bdb.c \
+ 	  sql.c sql_cmds.c sql_create.c sql_delete.c sql_find.c \
+ 	  sql_get.c sql_list.c sql_update.c sqlite.c \
+-	  postgresql.c
+-LIBOBJS = mysql.o bdb.o bdb_create.o bdb_get.o bdb_update.o \
+-	  bdb_delete.o bdb_find.o bdb_list.o \
++	  postgresql.c dbi.c
++LIBOBJS = mysql.o bdb.o \
+ 	  sql.o sql_cmds.o sql_create.o sql_delete.o sql_find.o \
+ 	  sql_get.o sql_list.o sql_update.o sqlite.o \
+-	  postgresql.o
++	  postgresql.o dbi.o
+
+ .SUFFIXES:	.c .o
+ .PHONY:
+Index: src/cats/sql_update.c
+===================================================================
+--- src/cats/sql_update.c	(revisÃ£o 6067)
++++ src/cats/sql_update.c	(cÃ³pia de trabalho)
+@@ -41,7 +41,7 @@
+ #include "bacula.h"
+ #include "cats.h"
+
+-#if    HAVE_SQLITE3 || HAVE_MYSQL || HAVE_SQLITE || HAVE_POSTGRESQL
++#if    HAVE_SQLITE3 || HAVE_MYSQL || HAVE_SQLITE || HAVE_POSTGRESQL ||
+HAVE_DBI
+
+ /* -----------------------------------------------------------------------
+  *
+Index: src/cats/cats.h
+===================================================================
+--- src/cats/cats.h	(revisÃ£o 6067)
++++ src/cats/cats.h	(cÃ³pia de trabalho)
+@@ -1,7 +1,7 @@
+ /*
+    BaculaÂ® - The Network Backup Solution
+
+-   Copyright (C) 2000-2007 Free Software Foundation Europe e.V.
++   Copyright (C) 2000-2008 Free Software Foundation Europe e.V.
+
+    The main author of Bacula is Kern Sibbald, with contributions from
+    many others, a complete list can be found in the file AUTHORS.
+@@ -69,7 +69,13 @@
+ #ifndef __SQL_H_
+ #define __SQL_H_ 1
+
++enum {
++   SQL_TYPE_MYSQL   = 0,
++   SQL_TYPE_POSTGRESQL = 1,
++   SQL_TYPE_SQLITE  = 2
++};
+
++
+ typedef void (DB_LIST_HANDLER)(void *, const char *);
+ typedef int (DB_RESULT_HANDLER)(void *, int, char **);
+
+@@ -519,6 +525,128 @@
+ #define SQL_ROW               POSTGRESQL_ROW
+ #define SQL_FIELD             POSTGRESQL_FIELD
+
++#else
++
++#ifdef HAVE_DBI
++
++#define BDB_VERSION 10
++
++#include <dbi/dbi.h>
++
++#define IS_NUM(x)        ((x) == 1 || (x) == 2 )
++#define IS_NOT_NULL(x)   ((x) == (1 << 0))
++
++typedef char **DBI_ROW;
++typedef struct dbi_field {
++   char         *name;
++   int           max_length;
++   unsigned int  type;
++   unsigned int  flags;       // 1 == not null
++} DBI_FIELD;
++
++
++/*
++ * This is the "real" definition that should only be
++ * used inside sql.c and associated database interface
++ * subroutines.
++ *
++ *                     D B I
++ */
++struct B_DB {
++   BQUEUE bq;                         /* queue control */
++   brwlock_t lock;                    /* transaction lock */
++   dbi_conn *db;
++   dbi_result *result;
++   dbi_error_flag status;
++   DBI_ROW row;
++   DBI_FIELD *fields;
++   int num_rows;
++   int row_size;                  /* size of malloced rows */
++   int num_fields;
++   int fields_size;               /* size of malloced fields */
++   int row_number;                /* row number from my_postgresql_data_seek
+*/
++   int field_number;              /* field number from
+my_postgresql_field_seek */
++   int ref_count;
++   int db_type;                   /* DBI driver defined */
++   char *db_driverdir ;           /* DBI driver dir */
++   char *db_driver;               /* DBI type database */
++   char *db_name;
++   char *db_user;
++   char *db_password;
++   char *db_address;              /* host address */
++   char *db_socket;               /* socket for local access */
++   int db_port;                   /* port of host address */
++   int have_insert_id;            /* do have insert_id() */
++   bool connected;
++   POOLMEM *errmsg;               /* nicely edited error message */
++   POOLMEM *cmd;                  /* SQL command string */
++   POOLMEM *cached_path;
++   int cached_path_len;           /* length of cached path */
++   uint32_t cached_path_id;
++   bool allow_transactions;       /* transactions allowed */
++   bool transaction;              /* transaction started */
++   int changes;                   /* changes made to db */
++   POOLMEM *fname;                /* Filename only */
++   POOLMEM *path;                 /* Path only */
++   POOLMEM *esc_name;             /* Escaped file name */
++   POOLMEM *esc_path;             /* Escaped path name */
++   int fnl;                       /* file name length */
++   int pnl;                       /* path name length */
++};
++
++void               my_dbi_free_result(B_DB *mdb);
++DBI_ROW            my_dbi_fetch_row  (B_DB *mdb);
++int                my_dbi_query      (B_DB *mdb, const char *query);
++void               my_dbi_data_seek  (B_DB *mdb, int row);
++void               my_dbi_field_seek (B_DB *mdb, int row);
++DBI_FIELD *        my_dbi_fetch_field(B_DB *mdb);
++const char *       my_dbi_strerror   (B_DB *mdb);
++int                my_dbi_getisnull  (dbi_result *result, int row_number, int
+column_number);
++char *             my_dbi_getvalue   (dbi_result *result, int row_number,
+unsigned int column_number);
++int                my_dbi_sql_insert_id(B_DB *mdb, char *table_name);
++
++// TODO: do batch insert in DBI
++//int my_dbi_batch_start(JCR *jcr, B_DB *mdb);
++//int my_dbi_batch_end(JCR *jcr, B_DB *mdb, const char *error);
++//typedef struct ATTR_DBR ATTR_DBR;
++//int my_dbi_batch_insert(JCR *jcr, B_DB *mdb, ATTR_DBR *ar);
++//char *my_dbi_copy_escape(char *dest, char *src, size_t len);
++
++//extern const char* my_dbi_batch_lock_path_query;
++//extern const char* my_dbi_batch_lock_filename_query;
++//extern const char* my_dbi_batch_unlock_tables_query;
++//extern const char* my_dbi_batch_fill_filename_query;
++//extern const char* my_dbi_batch_fill_path_query;
++
++/* "Generic" names for easier conversion */
++#define sql_store_result(x)   (x)->result
++#define sql_free_result(x)    my_dbi_free_result(x)
++#define sql_fetch_row(x)      my_dbi_fetch_row(x)
++#define sql_query(x, y)       my_dbi_query((x), (y))
++#define sql_close(x)          dbi_conn_close((x)->db)
++#define sql_strerror(x)       my_dbi_strerror(x)
++#define sql_num_rows(x)       dbi_result_get_numrows((x)->result)
++#define sql_data_seek(x, i)   my_dbi_data_seek((x), (i))
++/* #define sql_affected_rows(x)  dbi_result_get_numrows_affected((x)->result)
+*/
++#define sql_affected_rows(x)  1
++#define sql_insert_id(x,y)    my_dbi_sql_insert_id((x), (y))
++#define sql_field_seek(x, y)  my_dbi_field_seek((x), (y))
++#define sql_fetch_field(x)    my_dbi_fetch_field(x)
++#define sql_num_fields(x)     ((x)->num_fields)
++// TODO: do dbi batch insert
++#define sql_batch_start(x,y)    my_dbi_batch_start(x,y)
++#define sql_batch_end(x,y,z)    my_dbi_batch_end(x,y,z)
++#define sql_batch_insert(x,y,z) my_dbi_batch_insert(x,y,z)
++#define sql_batch_lock_path_query       my_dbi_batch_lock_path_query
++#define sql_batch_lock_filename_query   my_dbi_batch_lock_filename_query
++#define sql_batch_unlock_tables_query   my_dbi_batch_unlock_tables_query
++#define sql_batch_fill_filename_query   my_dbi_batch_fill_filename_query
++#define sql_batch_fill_path_query       my_dbi_batch_fill_path_query
++
++#define SQL_ROW               DBI_ROW
++#define SQL_FIELD             DBI_FIELD
++
++
+ #else  /* USE BACULA DB routines */
+
+ #define HAVE_BACULA_DB 1
+@@ -568,6 +696,7 @@
+ #endif /* HAVE_MYSQL */
+ #endif /* HAVE_SQLITE */
+ #endif /* HAVE_POSTGRESQL */
++#endif /* HAVE_DBI */
+ #endif
+
+ /* Use for better error location printing */
+@@ -910,6 +1039,11 @@
+ #include "sql_cmds.h"
+
+ /*
++ * Exported globals from sql.c
++ */
++extern int db_type;                   /* SQL engine type index */
++
++/*
+  * Some functions exported by sql.c for use within the
+  *   cats directory.
+  */
+Index: src/cats/sql_find.c
+===================================================================
+--- src/cats/sql_find.c	(revisÃ£o 6067)
++++ src/cats/sql_find.c	(cÃ³pia de trabalho)
+@@ -46,7 +46,7 @@
+ #include "bacula.h"
+ #include "cats.h"
+
+-#if    HAVE_SQLITE3 || HAVE_MYSQL || HAVE_SQLITE || HAVE_POSTGRESQL
++#if    HAVE_SQLITE3 || HAVE_MYSQL || HAVE_SQLITE || HAVE_POSTGRESQL ||
+HAVE_DBI
+
+ /* -----------------------------------------------------------------------
+  *
+Index: src/cats/sql_delete.c
+===================================================================
+--- src/cats/sql_delete.c	(revisÃ£o 6067)
++++ src/cats/sql_delete.c	(cÃ³pia de trabalho)
+@@ -44,7 +44,7 @@
+ #include "cats.h"
+
+
+-#if    HAVE_SQLITE3 || HAVE_MYSQL || HAVE_SQLITE || HAVE_POSTGRESQL
++#if    HAVE_SQLITE3 || HAVE_MYSQL || HAVE_SQLITE || HAVE_POSTGRESQL ||
+HAVE_DBI
+ /* -----------------------------------------------------------------------
+  *
+  *   Generic Routines (or almost generic)
+Index: src/cats/sql_create.c
+===================================================================
+--- src/cats/sql_create.c	(revisÃ£o 6067)
++++ src/cats/sql_create.c	(cÃ³pia de trabalho)
+@@ -43,7 +43,7 @@
+
+ static const int dbglevel = 500;
+
+-#if    HAVE_SQLITE3 || HAVE_MYSQL || HAVE_SQLITE || HAVE_POSTGRESQL
++#if    HAVE_SQLITE3 || HAVE_MYSQL || HAVE_SQLITE || HAVE_POSTGRESQL ||
+HAVE_DBI
+
+ /* -----------------------------------------------------------------------
+  *
+@@ -1124,4 +1124,4 @@
+
+ #endif /* ! HAVE_BATCH_FILE_INSERT */
+
+-#endif /* HAVE_SQLITE3 || HAVE_MYSQL || HAVE_SQLITE || HAVE_POSTGRESQL */
++#endif /* HAVE_SQLITE3 || HAVE_MYSQL || HAVE_SQLITE || HAVE_POSTGRESQL ||
+HAVE_DBI */
+Index: src/cats/sql_get.c
+===================================================================
+--- src/cats/sql_get.c	(revisÃ£o 6067)
++++ src/cats/sql_get.c	(cÃ³pia de trabalho)
+@@ -45,7 +45,7 @@
+ #include "bacula.h"
+ #include "cats.h"
+
+-#if    HAVE_SQLITE3 || HAVE_MYSQL || HAVE_SQLITE || HAVE_POSTGRESQL
++#if    HAVE_SQLITE3 || HAVE_MYSQL || HAVE_SQLITE || HAVE_POSTGRESQL ||
+HAVE_DBI
+
+ /* -----------------------------------------------------------------------
+  *
+@@ -1019,4 +1019,4 @@
+ }
+
+
+-#endif /* HAVE_SQLITE3 || HAVE_MYSQL || HAVE_SQLITE || HAVE_POSTGRESQL*/
++#endif /* HAVE_SQLITE3 || HAVE_MYSQL || HAVE_SQLITE || HAVE_POSTGRESQL ||
+HAVE_DBI */
+Index: src/cats/sql_cmds.c
+===================================================================
+--- src/cats/sql_cmds.c	(revisÃ£o 6281)
++++ src/cats/sql_cmds.c	(cÃ³pia de trabalho)
+@@ -95,32 +95,8 @@
+    "DROP TABLE DelCandidates",
+    NULL};
+
++const char *create_delindex = "CREATE INDEX DelInx1 ON DelCandidates (JobId)";
+
+-/* List of SQL commands to create temp table and indicies  */
+-const char *create_deltabs[] = {
+-   "CREATE TEMPORARY TABLE DelCandidates ("
+-#if defined(HAVE_MYSQL)
+-      "JobId INTEGER UNSIGNED NOT NULL, "
+-      "PurgedFiles TINYINT, "
+-      "FileSetId INTEGER UNSIGNED, "
+-      "JobFiles INTEGER UNSIGNED, "
+-      "JobStatus BINARY(1))",
+-#elif defined(HAVE_POSTGRESQL)
+-      "JobId INTEGER NOT NULL, "
+-      "PurgedFiles SMALLINT, "
+-      "FileSetId INTEGER, "
+-      "JobFiles INTEGER, "
+-      "JobStatus char(1))",
+-#else
+-      "JobId INTEGER UNSIGNED NOT NULL, "
+-      "PurgedFiles TINYINT, "
+-      "FileSetId INTEGER UNSIGNED, "
+-      "JobFiles INTEGER UNSIGNED, "
+-      "JobStatus CHAR)",
+-#endif
+-   "CREATE INDEX DelInx1 ON DelCandidates (JobId)",
+-   NULL};
+-
+ /* Fill candidates table with all Jobs subject to being deleted.
+  *  This is used for pruning Jobs (first the files, then the Jobs).
+  */
+@@ -270,32 +246,6 @@
+    "FROM Client,Job WHERE Client.ClientId=Job.ClientId AND JobStatus='T' "
+    "AND Type='B' ORDER BY StartTime DESC LIMIT 20";
+
+-#ifdef HAVE_MYSQL
+-/*  MYSQL IS NOT STANDARD SQL !!!!! */
+-/* List Jobs where a particular file is saved */
+-const char *uar_file =
+-   "SELECT Job.JobId as JobId,"
+-   "CONCAT(Path.Path,Filename.Name) as Name, "
+-   "StartTime,Type as JobType,JobStatus,JobFiles,JobBytes "
+-   "FROM Client,Job,File,Filename,Path WHERE Client.Name='%s' "
+-   "AND Client.ClientId=Job.ClientId "
+-   "AND Job.JobId=File.JobId "
+-   "AND Path.PathId=File.PathId AND Filename.FilenameId=File.FilenameId "
+-   "AND Filename.Name='%s' ORDER BY StartTime DESC LIMIT 20";
+-#else
+-/* List Jobs where a particular file is saved */
+-const char *uar_file =
+-   "SELECT Job.JobId as JobId,"
+-   "Path.Path||Filename.Name as Name, "
+-   "StartTime,Type as JobType,JobStatus,JobFiles,JobBytes "
+-   "FROM Client,Job,File,Filename,Path WHERE Client.Name='%s' "
+-   "AND Client.ClientId=Job.ClientId "
+-   "AND Job.JobId=File.JobId "
+-   "AND Path.PathId=File.PathId AND Filename.FilenameId=File.FilenameId "
+-   "AND Filename.Name='%s' ORDER BY StartTime DESC LIMIT 20";
+-#endif
+-
+-
+ /*
+  * Find all files for a particular JobId and insert them into
+  *  the tree during a restore.
+@@ -309,44 +259,6 @@
+ const char *uar_del_temp  = "DROP TABLE temp";
+ const char *uar_del_temp1 = "DROP TABLE temp1";
+
+-const char *uar_create_temp =
+-   "CREATE TEMPORARY TABLE temp ("
+-#ifdef HAVE_POSTGRESQL
+-   "JobId INTEGER NOT NULL,"
+-   "JobTDate BIGINT,"
+-   "ClientId INTEGER,"
+-   "Level CHAR,"
+-   "JobFiles INTEGER,"
+-   "JobBytes BIGINT,"
+-   "StartTime TEXT,"
+-   "VolumeName TEXT,"
+-   "StartFile INTEGER,"
+-   "VolSessionId INTEGER,"
+-   "VolSessionTime INTEGER)";
+-#else
+-   "JobId INTEGER UNSIGNED NOT NULL,"
+-   "JobTDate BIGINT UNSIGNED,"
+-   "ClientId INTEGER UNSIGNED,"
+-   "Level CHAR,"
+-   "JobFiles INTEGER UNSIGNED,"
+-   "JobBytes BIGINT UNSIGNED,"
+-   "StartTime TEXT,"
+-   "VolumeName TEXT,"
+-   "StartFile INTEGER UNSIGNED,"
+-   "VolSessionId INTEGER UNSIGNED,"
+-   "VolSessionTime INTEGER UNSIGNED)";
+-#endif
+-
+-const char *uar_create_temp1 =
+-   "CREATE TEMPORARY TABLE temp1 ("
+-#ifdef HAVE_POSTGRESQL
+-   "JobId INTEGER NOT NULL,"
+-   "JobTDate BIGINT)";
+-#else
+-   "JobId INTEGER UNSIGNED NOT NULL,"
+-   "JobTDate BIGINT UNSIGNED)";
+-#endif
+-
+ const char *uar_last_full =
+    "INSERT INTO temp1 SELECT Job.JobId,JobTdate "
+    "FROM Client,Job,JobMedia,Media,FileSet WHERE Client.ClientId=%s "
+@@ -460,6 +372,143 @@
+    "AND Filename.FilenameId=File.FilenameId "
+    "ORDER BY Job.StartTime DESC LIMIT 1";
+
++/* Query to get list of files from table -- presuably built by an external
+program */
++const char *uar_jobid_fileindex_from_table =
++   "SELECT JobId,FileIndex from %s";
++
++
++/*
++ *
++ *  This file contains all the SQL commands issued by the Director
++ *
++ *     Kern Sibbald, July MMII
++ *
++ *   Version $Id$
++ */
++/*
++ * Note, PostgreSQL imposes some constraints on using DISTINCT and GROUP BY
++ *  for example, the following is illegal in PostgreSQL:
++ *  SELECT DISTINCT JobId FROM temp ORDER BY StartTime ASC;
++ *  because all the ORDER BY expressions must appear in the SELECT list!
++ */
++
++
++#include "bacula.h"
++#include "cats.h"
++
++/* ====== ua_prune.c */
++
++/* List of SQL commands to create temp table and indicies  */
++const char *create_deltabs[3] = {
++   /* MySQL */
++   "CREATE TEMPORARY TABLE DelCandidates ("
++   "JobId INTEGER UNSIGNED NOT NULL, "
++   "PurgedFiles TINYINT, "
++   "FileSetId INTEGER UNSIGNED, "
++   "JobFiles INTEGER UNSIGNED, "
++   "JobStatus BINARY(1))",
++   /* Postgresql */
++   "CREATE TEMPORARY TABLE DelCandidates ("
++   "JobId INTEGER NOT NULL, "
++   "PurgedFiles SMALLINT, "
++   "FileSetId INTEGER, "
++   "JobFiles INTEGER, "
++   "JobStatus char(1))",
++   /* SQLite */
++   "CREATE TEMPORARY TABLE DelCandidates ("
++   "JobId INTEGER UNSIGNED NOT NULL, "
++   "PurgedFiles TINYINT, "
++   "FileSetId INTEGER UNSIGNED, "
++   "JobFiles INTEGER UNSIGNED, "
++   "JobStatus CHAR)"};
++
++/* ======= ua_restore.c */
++
++/* List Jobs where a particular file is saved */
++const char *uar_file[3] = {
++   /* Mysql */
++   "SELECT Job.JobId as JobId,"
++   "CONCAT(Path.Path,Filename.Name) as Name, "
++   "StartTime,Type as JobType,JobStatus,JobFiles,JobBytes "
++   "FROM Client,Job,File,Filename,Path WHERE Client.Name='%s' "
++   "AND Client.ClientId=Job.ClientId "
++   "AND Job.JobId=File.JobId "
++   "AND Path.PathId=File.PathId AND Filename.FilenameId=File.FilenameId "
++   "AND Filename.Name='%s' ORDER BY StartTime DESC LIMIT 20",
++   /* Postgresql */
++   "SELECT Job.JobId as JobId,"
++   "Path.Path||Filename.Name as Name, "
++   "StartTime,Type as JobType,JobStatus,JobFiles,JobBytes "
++   "FROM Client,Job,File,Filename,Path WHERE Client.Name='%s' "
++   "AND Client.ClientId=Job.ClientId "
++   "AND Job.JobId=File.JobId "
++   "AND Path.PathId=File.PathId AND Filename.FilenameId=File.FilenameId "
++   "AND Filename.Name='%s' ORDER BY StartTime DESC LIMIT 20",
++   /* SQLite */
++   "SELECT Job.JobId as JobId,"
++   "Path.Path||Filename.Name as Name, "
++   "StartTime,Type as JobType,JobStatus,JobFiles,JobBytes "
++   "FROM Client,Job,File,Filename,Path WHERE Client.Name='%s' "
++   "AND Client.ClientId=Job.ClientId "
++   "AND Job.JobId=File.JobId "
++   "AND Path.PathId=File.PathId AND Filename.FilenameId=File.FilenameId "
++   "AND Filename.Name='%s' ORDER BY StartTime DESC LIMIT 20"};
++
++const char *uar_create_temp[3] = {
++   /* Mysql */
++   "CREATE TEMPORARY TABLE temp ("
++   "JobId INTEGER UNSIGNED NOT NULL,"
++   "JobTDate BIGINT UNSIGNED,"
++   "ClientId INTEGER UNSIGNED,"
++   "Level CHAR,"
++   "JobFiles INTEGER UNSIGNED,"
++   "JobBytes BIGINT UNSIGNED,"
++   "StartTime TEXT,"
++   "VolumeName TEXT,"
++   "StartFile INTEGER UNSIGNED,"
++   "VolSessionId INTEGER UNSIGNED,"
++   "VolSessionTime INTEGER UNSIGNED)",
++   /* Postgresql */
++   "CREATE TEMPORARY TABLE temp ("
++   "JobId INTEGER NOT NULL,"
++   "JobTDate BIGINT,"
++   "ClientId INTEGER,"
++   "Level CHAR,"
++   "JobFiles INTEGER,"
++   "JobBytes BIGINT,"
++   "StartTime TEXT,"
++   "VolumeName TEXT,"
++   "StartFile INTEGER,"
++   "VolSessionId INTEGER,"
++   "VolSessionTime INTEGER)",
++   /* SQLite */
++   "CREATE TEMPORARY TABLE temp ("
++   "JobId INTEGER UNSIGNED NOT NULL,"
++   "JobTDate BIGINT UNSIGNED,"
++   "ClientId INTEGER UNSIGNED,"
++   "Level CHAR,"
++   "JobFiles INTEGER UNSIGNED,"
++   "JobBytes BIGINT UNSIGNED,"
++   "StartTime TEXT,"
++   "VolumeName TEXT,"
++   "StartFile INTEGER UNSIGNED,"
++   "VolSessionId INTEGER UNSIGNED,"
++   "VolSessionTime INTEGER UNSIGNED)"};
++
++const char *uar_create_temp1[3] = {
++   /* Mysql */
++   "CREATE TEMPORARY TABLE temp1 ("
++   "JobId INTEGER UNSIGNED NOT NULL,"
++   "JobTDate BIGINT UNSIGNED)",
++   /* Postgresql */
++   "CREATE TEMPORARY TABLE temp1 ("
++   "JobId INTEGER NOT NULL,"
++   "JobTDate BIGINT)",
++   /* SQLite */
++   "CREATE TEMPORARY TABLE temp1 ("
++   "JobId INTEGER UNSIGNED NOT NULL,"
++   "JobTDate BIGINT UNSIGNED)"};
++
+ /* Query to get all files in a directory -- no recursing
+  *  Note, for PostgreSQL since it respects the "Single Value
+  *  rule", the results of the SELECT will be unoptimized.
+@@ -467,8 +516,8 @@
+  *  for each time it was backed up.
+  */
+
+-#ifdef HAVE_POSTGRESQL
+-const char *uar_jobid_fileindex_from_dir =
++const char *uar_jobid_fileindex_from_dir[3] = {
++   /* Mysql */
+    "SELECT Job.JobId,File.FileIndex FROM Job,File,Path,Filename,Client "
+    "WHERE Job.JobId IN (%s) "
+    "AND Job.JobId=File.JobId "
+@@ -476,9 +525,9 @@
+    "AND Client.Name='%s' "
+    "AND Job.ClientId=Client.ClientId "
+    "AND Path.PathId=File.Pathid "
+-   "AND Filename.FilenameId=File.FilenameId";
+-#else
+-const char *uar_jobid_fileindex_from_dir =
++   "AND Filename.FilenameId=File.FilenameId "
++   "GROUP BY File.FileIndex ",
++   /* Postgresql */
+    "SELECT Job.JobId,File.FileIndex FROM Job,File,Path,Filename,Client "
+    "WHERE Job.JobId IN (%s) "
+    "AND Job.JobId=File.JobId "
+@@ -486,10 +535,14 @@
+    "AND Client.Name='%s' "
+    "AND Job.ClientId=Client.ClientId "
+    "AND Path.PathId=File.Pathid "
++   "AND Filename.FilenameId=File.FilenameId",
++   /* SQLite */
++   "SELECT Job.JobId,File.FileIndex FROM Job,File,Path,Filename,Client "
++   "WHERE Job.JobId IN (%s) "
++   "AND Job.JobId=File.JobId "
++   "AND Path.Path='%s' "
++   "AND Client.Name='%s' "
++   "AND Job.ClientId=Client.ClientId "
++   "AND Path.PathId=File.Pathid "
+    "AND Filename.FilenameId=File.FilenameId "
+-   "GROUP BY File.FileIndex ";
+-#endif
+-
+-/* Query to get list of files from table -- presuably built by an external
+program */
+-const char *uar_jobid_fileindex_from_table =
+-   "SELECT JobId,FileIndex from %s";
++   "GROUP BY File.FileIndex "};
+Index: src/cats/sql_cmds.h
+===================================================================
+--- src/cats/sql_cmds.h	(revisÃ£o 6067)
++++ src/cats/sql_cmds.h	(cÃ³pia de trabalho)
+@@ -26,10 +26,11 @@
+    Switzerland, email:ftf <at> fsfeurope.org.
+ */
+
++
+ extern const char CATS_IMP_EXP *client_backups;
+ extern const char CATS_IMP_EXP *list_pool;
+ extern const char CATS_IMP_EXP *drop_deltabs[];
+-extern const char CATS_IMP_EXP *create_deltabs[];
++extern const char CATS_IMP_EXP *create_delindex;
+ extern const char CATS_IMP_EXP *insert_delcand;
+ extern const char CATS_IMP_EXP *select_backup_del;
+ extern const char CATS_IMP_EXP *select_verify_del;
+@@ -49,13 +50,10 @@
+ extern const char CATS_IMP_EXP *upd_Purged;
+
+ extern const char CATS_IMP_EXP *uar_list_jobs;
+-extern const char CATS_IMP_EXP *uar_file;
+ extern const char CATS_IMP_EXP *uar_count_files;
+ extern const char CATS_IMP_EXP *uar_sel_files;
+ extern const char CATS_IMP_EXP *uar_del_temp;
+ extern const char CATS_IMP_EXP *uar_del_temp1;
+-extern const char CATS_IMP_EXP *uar_create_temp;
+-extern const char CATS_IMP_EXP *uar_create_temp1;
+ extern const char CATS_IMP_EXP *uar_last_full;
+ extern const char CATS_IMP_EXP *uar_full;
+ extern const char CATS_IMP_EXP *uar_inc;
+@@ -68,6 +66,12 @@
+ extern const char CATS_IMP_EXP *uar_sel_all_temp;
+ extern const char CATS_IMP_EXP *uar_count_files;
+ extern const char CATS_IMP_EXP *uar_jobids_fileindex;
+-extern const char CATS_IMP_EXP *uar_jobid_fileindex_from_dir;
+ extern const char CATS_IMP_EXP *uar_jobid_fileindex_from_table;
+ extern const char CATS_IMP_EXP *uar_sel_jobid_temp;
++
++extern const char CATS_IMP_EXP *create_deltabs[3];
++
++extern const char CATS_IMP_EXP *uar_file[3];
++extern const char CATS_IMP_EXP *uar_create_temp[3];
++extern const char CATS_IMP_EXP *uar_create_temp1[3];
++extern const char CATS_IMP_EXP *uar_jobid_fileindex_from_dir[3];
+Index: src/cats/sql_list.c
+===================================================================
+--- src/cats/sql_list.c	(revisÃ£o 6067)
++++ src/cats/sql_list.c	(cÃ³pia de trabalho)
+@@ -42,7 +42,7 @@
+ #include "bacula.h"
+ #include "cats.h"
+
+-#if    HAVE_SQLITE3 || HAVE_MYSQL || HAVE_SQLITE || HAVE_POSTGRESQL
++#if    HAVE_SQLITE3 || HAVE_MYSQL || HAVE_SQLITE || HAVE_POSTGRESQL ||
+HAVE_DBI
+
+ /* -----------------------------------------------------------------------
+  *
+Index: src/stored/bscan.c
+===================================================================
+--- src/stored/bscan.c	(revisÃ£o 6407)
++++ src/stored/bscan.c	(cÃ³pia de trabalho)
+@@ -82,10 +82,12 @@
+
+ static time_t lasttime = 0;
+
++static const char *db_driver = "NULL";
+ static const char *db_name = "bacula";
+ static const char *db_user = "bacula";
+ static const char *db_password = "";
+ static const char *db_host = NULL;
++static int db_port = 0;
+ static const char *wd = NULL;
+ static bool update_db = false;
+ static bool update_vol_info = false;
+@@ -119,11 +121,13 @@
+ "       -d <nn>           set debug level to <nn>\n"
+ "       -dt               print timestamp in debug output\n"
+ "       -m                update media info in database\n"
++"       -D <driver name>  specify the driver database name (default NULL)\n"
+ "       -n <name>         specify the database name (default bacula)\n"
+ "       -u <user>         specify database user name (default bacula)\n"
+ "       -P <password>     specify database password (default none)\n"
+ "       -h <host>         specify database host (default NULL)\n"
+-"       -p                proceed inspite of I/O errors\n"
++"       -p <port>         specify database port (default 0)\n"
++"       -i                proceed inspite of I/O errors\n"
+ "       -r                list records\n"
+ "       -s                synchronize or store in database\n"
+ "       -S                show scan progress periodically\n"
+@@ -150,7 +154,7 @@
+
+    OSDependentInit();
+
+-   while ((ch = getopt(argc, argv, "b:c:d:h:mn:pP:rsSu:vV:w:?")) != -1) {
++   while ((ch = getopt(argc, argv, "b:c:dD:h:p:mn:iP:rsSu:vV:w:?")) != -1) {
+       switch (ch) {
+       case 'S' :
+          showProgress = true;
+@@ -166,6 +170,10 @@
+          configfile = bstrdup(optarg);
+          break;
+
++      case 'D':
++         db_driver = optarg;
++         break;
++
+       case 'd':                    /* debug level */
+          if (*optarg == 't') {
+             dbg_timestamp = true;
+@@ -180,6 +188,10 @@
+       case 'h':
+          db_host = optarg;
+          break;
++
++      case 'p':
++         db_port = atoi(optarg);
++         break;
+
+       case 'm':
+          update_vol_info = true;
+@@ -197,7 +209,7 @@
+          db_password = optarg;
+          break;
+
+-      case 'p':
++      case 'i':
+          forge_on = true;
+          break;
+
+@@ -282,8 +294,8 @@
+          edit_uint64(currentVolumeSize, ed1));
+    }
+
+-   if ((db=db_init_database(NULL, db_name, db_user, db_password,
+-        db_host, 0, NULL, 0)) == NULL) {
++   if ((db=db_init(NULL, db_driver, db_name, db_user, db_password,
++        db_host, db_port, NULL, 0)) == NULL) {
+       Emsg0(M_ERROR_TERM, 0, _("Could not init Bacula database\n"));
+    }
+    if (!db_open_database(NULL, db)) {
+Index: autoconf/configure.in
+===================================================================
+--- autoconf/configure.in	(revisÃ£o 6067)
++++ autoconf/configure.in	(cÃ³pia de trabalho)
+@@ -189,6 +189,7 @@
+ support_sqlite=no
+ support_sqlite3=no
+ support_postgresql=no
++support_dbi=no
+ support_smartalloc=yes
+ support_readline=yes
+ support_conio=yes
+@@ -920,13 +921,10 @@
+
+
+ # -----------------------------------------------------------
+-# Python and OpenSSL are using dlopen
++# dlopen is needed for plugins
+ # -----------------------------------------------------------
++AC_SEARCH_LIBS(dlopen, [dl])
+
+-if test "$support_python" = "yes" -o "$support_tls" = "yes"; then
+-   AC_SEARCH_LIBS(dlopen, [dl])
+-fi
+-
+ # ------------------------------------------
+ # Where to place working dir
+ # ------------------------------------------
+@@ -1332,6 +1330,8 @@
+
+ BA_CHECK_SQLITE_DB
+
++BA_CHECK_DBI_DB
++
+ AC_SUBST(cats)
+ AC_SUBST(DB_TYPE)
+
+@@ -2335,7 +2335,7 @@
+    echo " "
+    echo " "
+    echo "You have not specified either --enable-client-only or one of the"
+-   echo "  supported databases: MySQL, PostgreSQL, SQLite3 or SQLite."
++   echo "  supported databases: MySQL, PostgreSQL, SQLite3, SQLite or DBI."
+    echo "  This is not permitted. Please reconfigure."
+    echo " "
+    echo "Aborting the configuration ..."
+Index: autoconf/config.h.in
+===================================================================
+--- autoconf/config.h.in	(revisÃ£o 6067)
++++ autoconf/config.h.in	(cÃ³pia de trabalho)
+@@ -21,6 +21,9 @@
+ /* Define to `int' if <sys/types.h> doesn't define.  */
+ #undef ssize_t
+
++/* Define if you want to use DBI */
++#undef HAVE_DBI
++
+ /* Define if you want to use PostgreSQL */
+ #undef HAVE_POSTGRESQL
+
+@@ -318,6 +321,10 @@
+    don't. */
+ #undef HAVE_DECL_GETC_UNLOCKED
+
++/* Define to 1 if you have the declaration of `tzname', and to 0 if you don't.
++   */
++#undef HAVE_DECL_TZNAME
++
+ /* Define to 1 if you have the declaration of `_snprintf', and to 0 if you
+    don't. */
+ #undef HAVE_DECL__SNPRINTF
+@@ -812,22 +819,22 @@
+ /* Define to 1 if the `setpgrp' function takes no argument. */
+ #undef SETPGRP_VOID
+
+-/* The size of a `char', as computed by sizeof. */
++/* The size of `char', as computed by sizeof. */
+ #undef SIZEOF_CHAR
+
+-/* The size of a `int', as computed by sizeof. */
++/* The size of `int', as computed by sizeof. */
+ #undef SIZEOF_INT
+
+-/* The size of a `int *', as computed by sizeof. */
++/* The size of `int *', as computed by sizeof. */
+ #undef SIZEOF_INT_P
+
+-/* The size of a `long int', as computed by sizeof. */
++/* The size of `long int', as computed by sizeof. */
+ #undef SIZEOF_LONG_INT
+
+-/* The size of a `long long int', as computed by sizeof. */
++/* The size of `long long int', as computed by sizeof. */
+ #undef SIZEOF_LONG_LONG_INT
+
+-/* The size of a `short int', as computed by sizeof. */
++/* The size of `short int', as computed by sizeof. */
+ #undef SIZEOF_SHORT_INT
+
+ /* Define as the maximum value of type 'size_t', if the system doesn't define
+@@ -839,7 +846,7 @@
+
+ /* If using the C implementation of alloca, define if you know the
+    direction of stack growth for your system; otherwise it will be
+-   automatically deduced at run-time.
++   automatically deduced at runtime.
+ 	STACK_DIRECTION > 0 => grows toward higher addresses
+ 	STACK_DIRECTION < 0 => grows toward lower addresses
+ 	STACK_DIRECTION = 0 => direction of growth unknown */
+@@ -899,7 +906,7 @@
+ /* Define to `int' if <sys/types.h> does not define. */
+ #undef mode_t
+
+-/* Define to `long' if <sys/types.h> does not define. */
++/* Define to `long int' if <sys/types.h> does not define. */
+ #undef off_t
+
+ /* Define to `int' if <sys/types.h> does not define. */
+@@ -912,7 +919,7 @@
+ /* Define to empty if the C compiler doesn't support this keyword. */
+ #undef signed
+
+-/* Define to `unsigned' if <sys/types.h> does not define. */
++/* Define to `unsigned int' if <sys/types.h> does not define. */
+ #undef size_t
+
+ /* Define to `int' if <sys/types.h> does not define. */
+Index: autoconf/bacula-macros/db.m4
+===================================================================
+--- autoconf/bacula-macros/db.m4	(revisÃ£o 6067)
++++ autoconf/bacula-macros/db.m4	(cÃ³pia de trabalho)
+@@ -1,3 +1,124 @@
++AC_DEFUN([BA_CHECK_DBI_DB],
++[
++db_found=no
++AC_MSG_CHECKING(for DBI support)
++AC_ARG_WITH(dbi,
++[
++  --with-dbi@<:@=DIR@:>@     Include DBI support.  DIR is the DBD base
++                          install directory, default is to search through
++                          a number of common places for the DBI files.],
++[
++  if test "$withval" != "no"; then
++     if test "$withval" = "yes"; then
++        if test -f /usr/local/include/dbi/dbi.h; then
++           DBI_INCDIR=/usr/local/dbi/include
++           if test -d /usr/local/lib64; then
++              DBI_LIBDIR=/usr/local/lib64
++           else
++              DBI_LIBDIR=/usr/local/lib
++           fi
++           DBI_BINDIR=/usr/local/bin
++        elif test -f /usr/include/dbi/dbi.h; then
++           DBI_INCDIR=/usr/include
++           if test -d /usr/lib64; then
++              DBI_LIBDIR=/usr/lib64
++           else
++              DBI_LIBDIR=/usr/lib
++           fi
++           DBI_BINDIR=/usr/bin
++        elif test -f $prefix/include/dbi/dbi.h; then
++           DBI_INCDIR=$prefix/include
++           if test -d $prefix/lib64; then
++              DBI_LIBDIR=$prefix/lib64
++           else
++              DBI_LIBDIR=$prefix/lib
++           fi
++           DBI_BINDIR=$prefix/bin
++        else
++           AC_MSG_RESULT(no)
++           AC_MSG_ERROR(Unable to find dbi.h in standard locations)
++        fi
++        if test -d /usr/local/lib/dbd; then
++           DRIVERDIR=/usr/local/lib/dbd
++           if test -d /usr/local/lib64/dbd; then
++              DRIVERDIR=/usr/local/lib64/dbd
++           else
++              DRIVERDIR=/usr/local/lib/dbd
++           fi
++        elif test -d /usr/lib/dbd; then
++           DRIVERDIR=/usr/lib/dbd
++           if test -d /usr/lib64/dbd; then
++              DRIVERDIR=/usr/lib64/dbd
++           else
++              DRIVERDIR=/usr/lib/dbd
++           fi
++        elif test -d $prefix/lib/dbd; then
++           if test -d $prefix/lib64/dbd; then
++              DRIVERDIR=$prefix/lib64/dbd
++           else
++              DRIVERDIR=$prefix/lib/dbd
++           fi
++        else
++           AC_MSG_RESULT(no)
++           AC_MSG_ERROR(Unable to find DBD drivers in standard locations)
++        fi
++     else
++        if test -f $withval/dbi.h; then
++           DBI_INCDIR=$withval
++           DBI_LIBDIR=$withval
++           DBI_BINDIR=$withval
++        elif test -f $withval/include/dbi/dbi.h; then
++           DBI_INCDIR=$withval/include
++           if test -d $withval/lib64; then
++              DBI_LIBDIR=$withval/lib64
++           else
++              DBI_LIBDIR=$withval/lib
++           fi
++           DBI_BINDIR=$withval/bin
++        else
++           AC_MSG_RESULT(no)
++           AC_MSG_ERROR(Invalid DBI directory $withval - unable to find dbi.h
+under $withval)
++        fi
++        if test -d $withval/dbd; then
++           DRIVERDIR=$withval/dbd
++        elif test -d $withval/lib/; then
++           if test -d $withval/lib64/dbd; then
++              DRIVERDIR=$withval/lib64/dbd
++           else
++              DRIVERDIR=$withval/lib/dbd
++           fi
++        else
++           AC_MSG_RESULT(no)
++           AC_MSG_ERROR(Invalid DBD driver directory $withval - unable to find
+DBD drivers under $withval)
++        fi
++     fi
++     SQL_INCLUDE=-I$DBI_INCDIR
++     SQL_LFLAGS="-L$DBI_LIBDIR -ldbi"
++     SQL_BINDIR=$DBI_BINDIR
++     SQL_LIB=$DBI_LIBDIR/libdbi.a
++     DBI_DBD_DRIVERDIR="-D DBI_DRIVER_DIR=\\\"$DRIVERDIR\\\""
++
++     AC_DEFINE(HAVE_DBI)
++     AC_MSG_RESULT(yes)
++     db_found=yes
++     support_dbi=yes
++     db_type=DBI
++     DB_TYPE=dbi
++
++  else
++     AC_MSG_RESULT(no)
++  fi
++],[
++  AC_MSG_RESULT(no)
++])
++AC_SUBST(SQL_LFLAGS)
++AC_SUBST(SQL_INCLUDE)
++AC_SUBST(SQL_BINDIR)
++AC_SUBST(DBI_DBD_DRIVERDIR)
++
++])
++
++
+ AC_DEFUN([BA_CHECK_MYSQL_DB],
+ [
+ db_found=no

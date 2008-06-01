@@ -1,0 +1,26 @@
+From: Kern Sibbald <kern <at> sibbald.com>
+Subject: Re:_libdbi_backend_to_catalog_database
+Newsgroups: gmane.comp.sysutils.backup.bacula.devel
+Date: 2008-02-01 15:52:37 GMT (8 weeks, 1 day, 11 hours and 16 minutes ago)
+On Friday 01 February 2008 16.44:48 David Boyes wrote:
+> > Is possible to add one more argument like char *db_type, this indicate
+> > what driver libdbi will use?. So Bacula uses db_init_database  in
+> > various places... and need to change them too.
+>
+> Why not add a /etc/bacula/dbms.conf file that the admin can edit to
+> indicate the installed database type and read your database type
+> information from there? I think it's unlikely that there will be more than
+> one database type in an individual Bacula install. Then you can do the
+> db_name_init once and not have to touch the rest of the code.
+
+I have fewer problems with the idea of touching the code than with adding
+another configuration file with possibly a different syntax. In fact, it
+would probably take more code than what I am proposing to read the database
+type from a separate file.
+
+When the Bacula drivers become shared objects, Bacula will be capable of
+working with multiple different database types simultaneously so any new
+implementation should include that possibility.
+
+Kern
+

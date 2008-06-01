@@ -1,0 +1,74 @@
+From: Arno Lehmann <al <at> its-lehmann.de>
+Subject: Re:_catalog_backend_to_IBM_DB2
+Newsgroups: gmane.comp.sysutils.backup.bacula.devel
+Date: 2007-09-05 19:51:53 GMT (29 weeks, 3 days, 7 hours and 16 minutes ago)
+Hi,
+
+05.09.2007 16:27,, João Henrique Freitas wrote::
+> Hello,
+>
+> I like to open a discussion about  Bacula project and some questions.
+>
+> For now, I am a postgraduation in development software and need to do a
+> work to finish my course.
+> The central motivation is study the contribution process on open source
+> and free software. How the enthusiastic user can became a developer in
+> some project.
+>
+> To prove my ideas and way I choice Bacula project to research and write
+> my work.
+>
+> Basically, I want to implement a catalog backend to IBM DB2. In the same
+> time I want to write my work based on this experiences.
+
+Can we get that work, once it's written? [:-)]
+
+> The motivation for the choice of IBM DB2 is not very especial. I need
+> learning DB2 and currently work with it.
+>
+> So, before I spend more energy, what ours opinions about this?
+
+I'd do the following:
+- make sure you understand how Bacula works, at least to the extent
+that you know what the catalog is needed for.
+- read some of Baculas code to make sure you understand the way it's
+written; this starts with coding style, and probably does not end when
+it comes to understanding how the different parts of Bacula are
+organized into classes or are represented by all the *cr structures.
+- use the trace feature to see what Bacula does with the catalog.
+- read the developers manual; there is some documentation of the
+catalog schema there.
+- read and understand the code of the different catalog backends.
+- start with one of the existing catalog backends - SQLite, MySQL,
+PostgreSQL - and start migrating it to DB2 SQL.
+- don't hesitate to ask questions, but make sure you ask clever
+questions. The developers who know the existing code best are really
+helpful people, but they probably prefer coding, testing, writing
+documentation over explaining things... personally, even if I were
+totally stuck somewhere, I'd make sure that whenever I have things to
+ask I can show some progress.
+
+Actually, I think you've got a nice project there. Not really being a
+developer, I thing getting another database to work as the catalog is
+rather simple, i.e. the thing itself is defined and you don't have to
+spend time thinking how to layout the database etc. The catalog
+database schema is really not very sophisticated, it's mainly rather
+simple SQL queries and data insertions. As a result, you can do some
+valuable work, but still concentrate on the main points of your
+project - understanding how open source projects work and learning
+about DB2.
+
+Good luck!
+
+Arno
+
+> Thanks a lot.
+>
+> PS: Please, I am not requesting you to develop this backend. It's Just a
+> technical opinion
+
+Also PS:
+I don't think your intentions can be misunderstood this way. In fact I
+think your post was a good example of a clever question [:-)]
+
+Arno

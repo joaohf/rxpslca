@@ -1,0 +1,107 @@
+From: David Boyes <dboyes <at> sinenomine.net>
+Subject: Re:_catalog_backend_to_IBM_DB2
+Newsgroups: gmane.comp.sysutils.backup.bacula.devel
+Date: 2007-11-30 21:16:32 GMT (17 weeks, 1 day, 5 hours and 52 minutes ago)
+
+> > Redistribution Information
+> >
+> > If You have developed an application that is dependent upon the files or
+> > modules listed below or located in the directory named below, You may
+> > distribute these files or modules, subject to the following terms:
+> > 1) The files or modules must be in object code.
+>
+> The above is very poor English coming from IBM.  I have no idea what it
+> really
+> means.
+
+IANAL, however what this usually means when talking to IBM is that you can
+compile and distribute modules
+based on these source files, but you cannot distribute any source of the IBM-
+supplied bits itself. If the
+modules are distributed from IBM in binary form only, you cannot include them
+in your package other than by
+reference via dynamic linking.
+
+> > 2) You will indemnify IBM or third parties that provide IBM products
+> > ("Third Parties") from and against any third party claim arising out of
+> the
+> > use or distribution of Your application.
+
+Usual "we didn't make it, not our fault" clause.
+
+> > 3) You may not use the same path name as the original files/modules.
+>
+> What does the above mean -- I cannot understand why such a restriction
+> would
+> be needed.
+
+It means you can't create something that replaces the IBM distributed files and
+call it DB/2 UDB Client.
+Also, on AIX, you're expected to register the pathname where your stuff goes
+with IBM if you expect it to go
+into /usr/lpp with all the other IBM-supplied stuff. They do this to minimize
+conflicts between file
+locations, and incidentally, to force their own developers to keep the files
+for a single product in one
+place (rather than scattering them around the filesystem like Microsoft or CA
+is wont to do).
+
+> > 4) You may not use IBM's or Third Parties' names or trademarks in
+> > connection with the marketing of Your applications without IBM's or
+> Third
+> > Parties' prior written consent.
+>
+> Well, the above is a bit absurd.  It apparently says that you cannot use
+> the
+> name DB2 in "marketing" Bacula, which means that it is useless to develop
+> a
+> DB2 interface since we cannot say that we have a DB2 interface.
+
+They have to have this in the agreement or THEY lose the ability to prosecute
+if someone *does* hijack the
+trademark. They have to enforce the trademark or lose the right to it entirely.
+See Kleenex/Jello/Xerox
+machine/etc.
+
+There are a set of rules for using the DB/2 trademark published on the IBM WWW
+site, and if you register as a one
+of their developers, in exchange you get limited rights to reference the
+trademarks according to the
+rules. They're not onerous; it comes down to you just have to spell it
+correctly and not cause them grief
+about what you do with it.
+
+> > 5) IBM or Third Parties provide copies of these files or modules "AS
+> IS,"
+> > i.e., You are responsible for all technical assistance for Your
+> > application. 6) In Your license agreement with the recipient, You will
+> > notify the recipient that these files or modules may not be 1) used for
+> any
+> > purpose other than to enable the application, 2) copied (except for
+> backup
+> > purposes), 3) further distributed, or 4) reverse assembled, reverse
+> > compiled, or otherwise translated.
+
+Not our fault, not our fault, not our fault, and if somebody misuses your
+product to do something illegal,
+then it's still your fault. Welcome to American IP law.
+
+*gag*
+
+> I think we need to understand the above a bit better before continuing.
+> If
+> you are writing something that work *only* on an IBM mainframe, then it is
+> not very interesting to the Bacula community and you might not get
+> approval
+> from us to use Bacula with the above proprietary code.  On the other hand,
+> if
+> you are writing a Generic DB2 Bacula driver that would work on any
+> platform
+> that has DB2, then it would be quite interesting.
+
+The DB/2 client code he's working with uses an IP socket connection to talk to
+a DB/2 server. It doesn't care
+what platform DB/2 actually runs on (albeit the client is supported on a subset
+of the platforms that
+Bacula runs on).
+

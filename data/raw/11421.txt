@@ -1,0 +1,16 @@
+From: David Boyes <dboyes <at> sinenomine.net>
+Subject: Re:_libdbi_backend_to_catalog_database
+Newsgroups: gmane.comp.sysutils.backup.bacula.devel
+Date: 2008-02-24 22:05:40 GMT (5 weeks, 5 days, 22 hours and 42 minutes ago)
+> > I will think more about this and do some explorations.
+>
+> I haven't really looked at where DB_TYPE is used, but we might want to
+> implement a DB_TYPE and a new DB_PROG variable so that we can keep
+your
+> DBI
+> type ...
+
+This (IMHO) seems to be the Right Thing. Set DB_TYPE to DBI, and DB_PROG
+to the correct database program identifier, triggering script install
+and run on DB_PROG. I think it's the least surprising method.
+

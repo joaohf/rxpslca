@@ -1,0 +1,37 @@
+From: John Stoffel <john <at> stoffel.org>
+Subject: Re:_libdbi_backend_to_catalog_database
+Newsgroups: gmane.comp.sysutils.backup.bacula.devel
+Date: 2008-02-01 21:26:03 GMT (8 weeks, 1 day, 5 hours and 42 minutes ago)
+>>>>> "Kern" == Kern Sibbald <kern <at> sibbald.com> writes:
+
+Kern> On Friday 01 February 2008 16.44:48 David Boyes wrote:
+>> > Is possible to add one more argument like char *db_type, this indicate
+>> > what driver libdbi will use?. So Bacula uses db_init_database  in
+>> > various places... and need to change them too.
+>>
+>> Why not add a /etc/bacula/dbms.conf file that the admin can edit to
+>> indicate the installed database type and read your database type
+>> information from there? I think it's unlikely that there will be more than
+>> one database type in an individual Bacula install. Then you can do the
+>> db_name_init once and not have to touch the rest of the code.
+
+Kern> I have fewer problems with the idea of touching the code than
+Kern> with adding another configuration file with possibly a different
+Kern> syntax. In fact, it would probably take more code than what I am
+Kern> proposing to read the database type from a separate file.
+
+I agree that making another seperate config file is a bad idea.
+
+Kern> When the Bacula drivers become shared objects, Bacula will be
+Kern> capable of working with multiple different database types
+Kern> simultaneously so any new implementation should include that
+Kern> possibility.
+
+So why is this a good thing?  I've never understood the idea to have
+different catalogs either, or what the design goal is.
+
+Should I be using different catalogs for each client?  Should I be
+using different Pools for each client?
+
+John
+

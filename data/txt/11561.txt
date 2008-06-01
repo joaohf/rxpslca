@@ -1,0 +1,58 @@
+From: João Henrique Freitas <joaohf <at> gmail.com>
+Subject: Re:_libdbi_backend_to_catalog_database
+Newsgroups: gmane.comp.sysutils.backup.bacula.devel
+Date: 2008-03-18 00:29:18 GMT (2 weeks, 4 days, 20 hours and 18 minutes ago)
+Thanks,
+
+>
+>  If you did not explicitly malloc them in your code, then they probably need
+to
+>  be free'ed in a different way. If you point me to the code that does the
+>  malloc, I can respond better ...
+
+Ok, in line 981 to 988 I malloc buf. This function return buf. In line
+461, my_dbi_fetch_row call my_dbi_getvalue (and return buf to
+mdb->row[j]). So, mdb->row[j] have many buf malloced.
+
+To free all, in line 625 I use a looping and free every mdb->row[j].
+
+Please, see the dbi.c attached.
+
+But I have another problem more confusing
+
+Like I wrote, libdbi does't has support to PQ*CopyData functions. The
+solution is use void* dbi_driver_specific_function(dbi_driver, const
+char*) function and returns a function pointer to the specifed custom
+function.
+
+In lines
+820 int (*custom_function)(void*, const char*, int);
+863 custom_function =
+dbi_driver_specific_function(dbi_conn_get_driver(mdb->db),
+"PQputCopyData")
+865 res = custom_function(myconn->connection, (const char *)mdb->cmd,
+(int)len);
+
+I declare a function pointer to custom_function, call specific
+function (here, PQputCopyData) and use this.
+
+Ok, no problems here. When I compiling this, Bacula saw:
+
+Compiling dbi.c
+dbi.c: In function 'int my_dbi_batch_insert(JCR*, B_DB*, ATTR_DBR*)':
+dbi.c:863: error: invalid conversion from 'void*' to 'int (*)(void*,
+const char*, int)'
+make[1]: ** [dbi.o] Erro 1
+
+I don't understend why invalid conversion. Any suggestion about?
+
+Thanks.
+
+PS1: In http://libdbi-drivers.cvs.sourceforge.net/libdbi-drivers/libdbi-
+drivers/tests/test_dbi.c?view=markup
+lines 600 and 602 it compiling and run. Have Bacula any special flag
+to impossibility this construction?
+
+PS2: dbi.c and cats.h has attached.
+Attachment_(dbi.c): text/x-csrc, 32 KiB
+Attachment_(cats.h): text/x-chdr, 41 KiB

@@ -1,0 +1,29 @@
+From: João Henrique Freitas <joaohf <at> gmail.com>
+Subject: catalog_backend_to_IBM_DB2
+Newsgroups: gmane.comp.sysutils.backup.bacula.devel
+Date: 2007-09-05 14:27:45 GMT (29 weeks, 3 days, 12 hours and 40 minutes ago)
+Hello,
+
+I like to open a discussion about Bacula project and some questions.
+
+For now, I am a postgraduation in development software and need to do a work to
+finish my course.
+The central motivation is study the contribution process on open source and
+free software. How the enthusiastic user can became a developer in some
+project.
+
+To prove my ideas and way I choice Bacula project to research and write my
+work.
+
+Basically, I want to implement a catalog backend to IBM DB2. In the same time I
+want to write my work based on this experiences.
+
+The motivation for the choice of IBM DB2 is not very especial. I need learning
+DB2 and currently work with it.
+
+So, before I spend more energy, what ours opinions about this?
+
+Thanks a lot.
+
+PS: Please, I am not requesting you to develop this backend. It's Just a
+technical opinion

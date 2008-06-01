@@ -1,0 +1,157 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+  <head>
+    <title>Gmane -- Mail To News And Back Again</title>
+    <link href="http://gmane.org/img/gmane.css" rel="stylesheet" type="text/css">
+    <link rel="SHORTCUT ICON" href="http://gmane.org/favicon.ico">
+</head>
+<body bgcolor=white text=black class=main>
+  <table cellpadding=5 cellspacing=10 class="main">
+  <tr valign=top>
+  <td class="maintd">
+  <div class="tdiv">
+  <div>
+  <a href="http://gmane.org/">Home</a><br>
+  <a href="http://dir.gmane.org/">Reading</a><br>
+  <a href="http://search.gmane.org">Searching</a><br>
+  <a href="http://gmane.org/subscribe.php">Subscribe</a><br>
+  <a href="http://gmane.org/sponsors.php">Sponsors</a><br>
+  <a href="http://gmane.org/stats.php">Statistics</a><br>
+  <a href="http://gmane.org/post.php">Posting</a><br>
+  <a href="http://gmane.org/contact.php">Contact</a><br>
+  <a href="http://gmane.org/spam-control.php">Spam</a><br>
+  <a href="http://gmane.org/find.php">Lists</a><br>
+  <a href="http://gmane.org/links.php">Links</a><br>
+<a href="http://gmane.org/about.php">About</a><br>
+<a href="http://gmane.org/host.php">Hosting</a><br>
+<a href="http://gmane.org/filter.php">Filtering</a><br>
+<a href="http://gmane.org/features.php">Features</a>
+<a href="http://gmane.org/dist.php">Download</a><br>
+<a href="http://gmane.org/logo.php">Marketing</a><br>
+<a href="http://gmane.org/import.php">Archives</a><br>
+<a href="http://weaver.gmane.org/">Weaver</a><br>
+  <a href="http://gmane.org/faq.php">FAQ</a><br>
+  &nbsp;<br>
+  </div>
+  <div class="ltd">
+  <!-- <img src="http://gmane.org/img/gmane-25.png" width=25 height=25 alt="Gmane"> -->
+  </div>
+  </div>
+  </td>
+  <td align=center class="maintd">
+  <a href="http://gmane.org/"><img src="http://gmane.org/img/gmane-rot.png" alt="Gmane" border=0></a>
+  </td>
+  <td class="bodytd">  
+<div class="headers">
+<div class="face">
+<a target="_top" href="http://ftp.cs.indiana.edu/pub/faces/picons/"><img border=0 alt="Picon" src="http://cache.gmane.org//gmane/comp/sysutils/backup/bacula/devel/11241-picon-001.gif"></a>
+</div>
+From: João Henrique Freitas &lt;joaohf &lt;at&gt; gmail.com&gt;<br>
+Subject: <a target="_top" rel="nofollow" href="http://news.gmane.org/find-root.php?message_id=%3c88e33d220801311703n308683fawa934abfec8762a86%40mail.gmail.com%3e">libdbi backend to catalog database</a><br>
+Newsgroups: <a href="http://news.gmane.org/gmane.comp.sysutils.backup.bacula.devel" target="_top">gmane.comp.sysutils.backup.bacula.devel</a><br>
+Date: 2008-02-01 01:03:31 GMT
+ (8 weeks, 2 days, 2 hours and 5 minutes ago)<br></div>
+<pre>
+Hello,
+
+This is a status report of the work to implement libdbi in Bacula.
+
+In my tests *All regression tests running*. Now I fix some things
+after post the code here.
+
+I have a design problem:
+
+The libdbi API need know what dbms we want to use and load the correct
+driver. For exemple mysql, pgsql, sqlite3, etc...
+
+Actually, in mysql.c, postgresql.c and dbi.c the scope of funcion
+db_init_database is:
+
+ B_DB *
+db_init_database(JCR *jcr, const char *db_name, const char *db_user,
+const char *db_password,
+                 const char *db_address, int db_port, const char *db_socket,
+                 int mult_db_connections)
+
+Is possible to add one more argument like char *db_type, this indicate
+what driver libdbi will use?. So Bacula uses db_init_database  in
+various places... and need to change them too.
+
+OR
+
+The argument char *db_name would be: mysql:bacula where mysql indicate
+a driver to libdbi and bacula is the name of database.
+
+Like this in bacula-dir.conf:
+
+Catalog {
+  Name = MyCatalog
+  dbaddress = 127.0.0.1; dbport = 5432; dbname = "mysql:bacula"; user
+= bacula; password = "bacula"
+}
+
+On db_init_database, we split db_name and everything will be done
+right without change in others places of the code.
+
+I don't want to change others places of Bacula. What is the best solution?
+
+Thanks
+
+-- 
+-----------------------------------------------------------
+João Henrique Freitas - joaohf_at_gmail.com
+Campinas-SP-Brasil
+BSD051283
+LPI 1
+<a rel="nofollow" href="http://joaohf.pbwiki.com" target="_top">http://joaohf.pbwiki.com</a>
+<a rel="nofollow" href="http://www.livejournal.com/users/joaohf/" target="_top">http://www.livejournal.com/users/joaohf/</a>
+-------------------------------------------------------------------------
+This SF.net email is sponsored by: Microsoft
+Defy all challenges. Microsoft(R) Visual Studio 2008.
+<a rel="nofollow" href="http://clk.atdmt.com/MRT/go/vse0120000070mrt/direct/01/" target="_top">http://clk.atdmt.com/MRT/go/vse0120000070mrt/direct/01/</a>
+_______________________________________________
+Bacula-devel mailing list
+Bacula-devel &lt;at&gt; lists.sourceforge.net
+<a rel="nofollow" href="https://lists.sourceforge.net/lists/listinfo/bacula-devel" target="_top">https://lists.sourceforge.net/lists/listinfo/bacula-devel</a>
+</pre>
+<script type="text/javascript">
+document.domain = 'gmane.org';
+document.title = 'libdbi backend to catalog database';
+</script>
+<td rowspan=2 class="listid">
+<a href="http://dir.gmane.org/gmane.comp.sysutils.backup.bacula.devel">
+<img border=0 src="http://gmane.org/paint-list-id.php?group=gmane.comp.sysutils.backup.bacula.devel">
+</a>
+</td> 
+</td>
+</tr>
+<tr>
+<td class="bads" colspan=2>
+&nbsp;
+<!--
+Get rid of ads<br><a href="http://gmane.org/donate.php">Donate to Gmane</a>
+-->
+</td>
+<td class="maintd" colspan=1 align=left>
+<script type="text/javascript"><!--
+google_ad_client = "pub-5884878215917141";
+google_alternate_ad_url = "http://gmane.org/blank.php";
+google_ad_width = 728;
+google_ad_height = 90;
+google_ad_format = "728x90_as";
+google_ad_channel ="";
+google_page_url = document.location;
+google_color_border = "FFFFFF";
+google_color_bg = "FFFFFF";
+google_color_link = "002390";
+google_color_url = "000000";
+google_color_text = "000000";
+//--></script>
+<script type="text/javascript"
+  src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script>
+  </td>
+  </tr>
+  </table>
+  </body>
+</html>

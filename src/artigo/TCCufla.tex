@@ -1,0 +1,279 @@
+% Copyright (c) 2008, João Henrique Ferreira de Freitas
+% All rights reserved.
+% 
+% Redistribution and use in source and binary forms, with or without modification,
+% are permitted provided that the following conditions are met:
+% 
+%     * Redistributions of source code must retain the above copyright notice,
+%       this list of conditions and the following disclaimer.
+%     * Redistributions in binary form must reproduce the above copyright notice,
+%       this list of conditions and the following disclaimer in the documentation and/or 
+%       other materials provided with the distribution.
+%     * Neither the name of the <ORGANIZATION> nor the names of its contributors may
+%       be used to endorse or promote products derived from this software without 
+%       specific prior written permission.
+% 
+% THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY 
+% EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+% OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
+% SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+% SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
+% OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+% HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+% OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+% SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+% 
+% $Id$
+%
+% Arquivo para junção de todos os documentos presentes e configuração do LaTex
+
+\documentclass[12pt]{article}
+
+\usepackage{sbc-template}
+
+\usepackage[brazil]{babel}    % dá suporte para os termos na língua portuguesa do Brasil
+\usepackage[latin1,utf8]{inputenc}
+                              % Caso tenha problemas ao usar UTF-8, experimente \usepackage{ucs}
+\usepackage{indentfirst}       % indenta os primeiros parágrafos
+%\usepackage{amssymb,amsmath}   % simbolos matemáticos providos pela AMS
+\usepackage[dvipdfm]{graphicx} % para inclusão de figuras (png, jpg, gif, bmp)
+\usepackage{subfigure}         % figuras e tabelas lado a lado
+\usepackage{graphics}          % figuras gráficas
+\usepackage{color}             % para letras e caixas coloridas
+\usepackage{makeidx}           % índice remissivo
+\usepackage{a4wide}            % correta formatação da página em A4
+%\usepackage{setspace}          % para a distância entre linhas
+
+\usepackage{hyperref}          % faz funcionar o \hipersetup
+\usepackage{url}
+%\usepackage{graphic,url}
+%\usepackage[pdftex]{hyperref}
+
+%\usepackage[brazil]{babel}   
+
+%\usepackage{draftwatermark}
+
+
+\usepackage{fancyvrb}
+\usepackage{setspace}
+
+\usepackage{wrapfig}
+\usepackage{booktabs}
+
+     
+\sloppy
+
+\title{Evidenciação empírica de um processo para contribuição em projetos de Software Livre e Código Aberto}
+
+\author{João Henrique Ferreira de Freitas}
+
+
+\address{Pós Graduação em Desenvolvimento de Software com ênfase em Software Livre\\
+  Universidade Federal de Lavras (ULFA)\\
+  Lavras -- MG -- Brasil
+  \email{joaohf@gmail.com}
+}
+
+% Termos curtos empregrados
+\newcommand{\patch}{``libdbi backend to catalog database'' }
+\newcommand{\patchshort}{``libdbi''}
+
+\newlength{\ABNTsignwidth}
+\setlength{\ABNTsignwidth}{5cm}
+
+\newlength{\ABNTsignthickness}
+\setlength{\ABNTsignthickness}{0pt}
+
+\newlength{\ABNTsignskip}
+\setlength{\ABNTsignskip}{2.5cm}
+
+\newcommand{\assinatura}{\ABNTsign}
+
+\newcommand{\ABNTsign}[1]{%
+  \parbox[t]{8cm}{\setstretch{1.}\vspace*{1.5cm}\centering%
+  Professor:\rule{\ABNTsignwidth}{\ABNTsignthickness}\\%
+  \nopagebreak #1\par}%
+}
+
+\newcommand{\assinaturaorientador}{\ABNTsignorientador}
+
+\newcommand{\ABNTsignorientador}[1]{%
+  \parbox[t]{8cm}{\setstretch{1.}\vspace*{1.5cm}
+  \begin{center}
+    \hspace*{2cm}Professor:\rule{\ABNTsignwidth}{\ABNTsignthickness}\\%
+    \nopagebreak \centering #1\par
+  \end{center}}
+}
+
+\newcommand{\aprovada}{\ABNTaprovada}
+
+\newcommand{\ABNTaprovada}{%
+  \parbox[t]{8cm}{\setstretch{1.}\vspace*{1.0cm}\centering%
+  APROVADA em \rule{0.7cm}{0.4pt} de \rule{0.7cm}{0.4pt} de \rule{0.7cm}{0.4pt}\\%
+  \nopagebreak \par}%
+}
+
+\newcommand{\capa}%
+{%
+\newpage
+\clearpage
+%\setcounter{page}\z@
+\thispagestyle{empty}%
+\begin{wrapfigure}[1]{l}{4cm}
+  \includegraphics[scale=0.3]{../../doc/figuras/logo_ufla.eps}
+\end{wrapfigure}
+\large\textbf{\uppercase{Universidade Federal de Lavras}}
+\par
+\vspace*{3cm}
+\setstretch{1.1}
+ \begin{center}
+  \LARGE \uppercase{\textbf{Evidenciação empírica de um processo para contribuição em projetos de Software Livre e Código Aberto}}
+ \end{center}
+\vfill
+ \begin{center}
+  \uppercase{\LARGE João Henrique Ferreira de Freitas}
+ \end{center}
+
+\vspace*{1cm}
+\vfill\vfill\vfill
+\begin{center}
+	\uppercase{Lavras \\ Minas Gerais - Brasil}
+\end{center}
+\vspace*{1cm}
+\clearpage
+}% end of \capa
+
+\newcommand{\folhaderosto}%
+{%
+\clearpage
+\thispagestyle{empty}
+\begin{center}
+\large \uppercase{ \textbf{João Henrique Ferreira de Freitas} } \\
+\vspace*{3.5cm}
+
+\large \uppercase{ \textbf{Evidenciação empírica de um processo para contribuição em projetos de Software Livre e Código Aberto} }  \\[3cm]
+\end{center}
+   \hspace{.45\textwidth} % posicionando a minipage
+   \begin{minipage}{.5\textwidth}
+     \begin{spacing}{1.}
+       \textbf{Trabalho de Conclusão apresentada(o)
+ao Departamento de Ciência da Computação da
+Universidade Federal de Lavras, como parte das
+exigências do curso de Pós-Graduação Lato Sensu em
+Produção de Software Livre, para a obtenção do título de
+especialização.
+}
+     \end{spacing}
+   \end{minipage}
+%\vspace*{2cm}
+%\setlength{\ABNTsignthickness}{0.4pt}
+%\assinaturaorientador{\hspace*{3cm}UFLA \\ \hspace*{3cm}Orientador }
+\begin{center} 
+\parbox[t]{8cm}{\setstretch{1.}\vspace*{2.5cm}\centering%
+  Professor Orientador:\\Ahmed Ali Abdalla Esmin%
+  \nopagebreak \par}%
+\end{center}
+\vspace*{2.5cm}
+\begin{center}
+\uppercase{Lavras \\ Minas Gerais - Brasil}
+\end{center}
+\clearpage
+}% end of \folhaderosto
+
+
+\newcommand{\folhadeaprovacao}%
+{
+%\begin{folhadeaprovacao}
+\clearpage
+\thispagestyle{empty}
+\begin{center}
+%\ABNTautordata
+\large \uppercase{ \textbf{João Henrique Ferreira de Freitas} } \\[3cm]
+%\ABNTtitulodata
+\large \uppercase{ \textbf{Evidenciação empírica de um processo para contribuição em projetos de Software Livre e Código Aberto} }  \\[2cm]
+\end{center}
+   \hspace{.45\textwidth} % posicionando a minipage
+   \begin{minipage}{.5\textwidth}
+     \begin{spacing}{1.}
+       \textbf{Trabalho de Conclusão apresentada(o)
+ao Departamento de Ciência da Computação da
+Universidade Federal de Lavras, como parte das
+Produção de Software Livre, para a obtenção do título de
+especialização.
+}
+     \end{spacing}
+   \end{minipage}
+\aprovada
+
+\setlength{\ABNTsignthickness}{0.4pt}
+\assinatura{ }
+
+\assinatura{ }
+
+\assinaturaorientador{\hspace*{3.5cm}UFLA Orientador }
+\begin{center}
+\uppercase{Lavras \\ Minas Gerais - Brasil}
+\end{center}
+\clearpage
+%\end{folhadeaprovacao}
+}
+
+% Redefine o sumário para não conter número de página
+\let\Oldtableofcontents\tableofcontents
+\renewcommand{\tableofcontents}{\Oldtableofcontents\thispagestyle{empty}}
+
+\begin{document} 
+
+\capa
+\folhaderosto
+\folhadeaprovacao
+\newpage
+\thispagestyle{empty}
+\tableofcontents
+\newpage
+\thispagestyle{empty}
+\listoffigures
+\newpage
+\maketitle
+
+\begin{abstract}
+%by goolgle.com
+This article analyses the disclosure of a process of exposure and general guides  in which users and developers of projects in Free and Open Source Software (FLOSS) can use to accelerate contributions in their projects and communities. The article exposes the definition of contribution in the context of FLOSS, social integration within the community and an experiment conducted with the software Bacula to demonstrate all the concepts discussed in the article.
+\end{abstract}
+
+\begin{resumo}
+Este artigo analisa a evidenciação de um processo e exposição de guias gerais nas quais usuários e desenvolvedores de projetos em Software Livre e Código Aberto (SL/CA) podem utilizar para acelerar as contribuições em seus projetos e comunidades. O artigo expõe a definição de contribuição no contexto de SL/CA, inserção social dentro da comunidade de SL/CA bem como uma experiência realizada com o software Bacula para demonstrar todos os conceitos abordados no artigo.
+\end{resumo}
+
+% Resumo e Introdução
+\input{Introducao}
+% Objetivos
+\input{Objetivos}
+% Trabalhos Relacionados <- Pensar em fazer merge junto com introdução
+\input{TrabalhosRelacionados}
+% Metodologia Utilizada
+\input{MetodologiaUtilizada}
+% Exposição de experiências
+\input{ExposicaoExperiencias}
+% Conclusão
+\input{Conclusao}
+% Referências bibliográficas
+\newpage
+\section{Referências Bibliográficas}
+\bibliographystyle{sbc}
+\bibliography{TCCufla}
+% Anexo [Resultados obtidos]
+\newpage
+\input{AnexoA}
+\newpage
+\input{AnexoB}
+\newpage
+\input{AnexoC}
+\newpage
+\input{AnexoD}
+\newpage
+\input{AnexoE}
+\newpage
+\input{AnexoG}
+
+\end{document}

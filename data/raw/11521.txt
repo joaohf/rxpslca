@@ -1,0 +1,21 @@
+From: João Henrique Freitas <joaohf <at> gmail.com>
+Subject: Re:_libdbi_backend_to_catalog_database
+Newsgroups: gmane.comp.sysutils.backup.bacula.devel
+Date: 2008-03-05 11:27:01 GMT (4 weeks, 3 days, 9 hours and 20 minutes ago)
+Hello Kern
+
+>  OK, good luck.  I hope dbi has the capabilities we need for batch insert --
+>  I'm a bit worried that they won't have those kinds of more "advanced"
+>  features ...
+
+Don't worry, libdbi has support to batch insert. Only specific
+functions for postgresql like copy functions, libdbi does not have
+support. And need be called in another way, but have solution.
+
+Now I test batch insert with Mysql and libdb. Half of the regression
+tests had successful.
+
+One doubt. Have any special magic to run valgrind with Bacula?
+
+Thanks
+
