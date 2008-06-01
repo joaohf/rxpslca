@@ -1,0 +1,13 @@
+From: Kern Sibbald <kern <at> sibbald.com>
+Subject: Re:_catalog_backend_to_IBM_DB2
+Newsgroups: gmane.comp.sysutils.backup.bacula.devel
+Date: 2007-12-10 14:45:00 GMT (15 weeks, 5 days, 12 hours and 23 minutes ago)
+Hello João,
+
+This is a very good way to do it.  Thanks.
+
+Good luck.
+
+Kern
+
+

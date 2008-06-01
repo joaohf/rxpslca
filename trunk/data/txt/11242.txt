@@ -1,0 +1,46 @@
+From: Kern Sibbald <kern <at> sibbald.com>
+Subject: Re:_libdbi_backend_to_catalog_database
+Newsgroups: gmane.comp.sysutils.backup.bacula.devel
+Date: 2008-02-01 08:09:25 GMT (8 weeks, 1 day, 18 hours and 59 minutes ago)
+Hello,
+
+I am really pleased to see that you are making progress.  Please don't forget
+to email me a copy of the code, in its current state.  Doing so, can avoid
+doing more work later as I will be able to give you early comments.
+
+Concerning the design problem where you need to know the driver type:  I have
+been planning to turn the drivers into shared objects at some point and so
+what you are asking for is what will also be needed at that point.
+
+I would be interested to hear comments from other people on this list, but
+rather than overload an existing directive my inclination would be to create
+a new directive named:
+
+  DB Driver = "mysql" ...
+
+or in your case it can be:
+
+  DB Driver = "libdbi:mysql"  or "libdbi:postgres", ...
+
+Note, once we have shared objects, in your case, two pieces of information are
+needed by Bacula: 1. your driver name (libdbi or whatever you want), and 2.
+the driver you are going to load.  Obviously, in the current situation where
+the Bacula driver is compiled in, the "libdbi" is not currently needed, but
+that won't hurt anything.
+
+Then make a new db_ call which would be:
+
+  db_load_driver(JCR *jcr, const char *db_driver);
+
+At the moment, this would do nothing except save the name passed in the jcr
+structure.  Then in your libdbi db_init_database() code, you will be able to
+parse the name to find what driver to call.  Later, the db_load_driver() code
+will be enhanced to actually load the appropriate shared object library ...
+
+If everyone agrees on this, I'll be happy to add the necessary "core" code for
+you.
+
+Best regards,
+
+Kern
+

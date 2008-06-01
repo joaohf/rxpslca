@@ -1,0 +1,33 @@
+From: David Boyes <dboyes <at> sinenomine.net>
+Subject: Re:_catalog_backend_to_IBM_DB2
+Newsgroups: gmane.comp.sysutils.backup.bacula.devel
+Date: 2007-09-06 12:59:19 GMT (29 weeks, 2 days, 14 hours and 9 minutes ago)
+> > The motivation for the choice of IBM DB2 is not very especial. I
+need
+> > learning DB2 and currently work with it.
+> >
+> > So, before I spend more energy, what ours opinions about this?
+
+Great idea. There is a lot of interest in DB/2 in the commercial world,
+especially if you assume and test with z/OS DB/2 as the backend
+database. The combination of Bacula on Linux for Z and the DB/2 on z/OS
+is a very compelling argument for enterprise deployment.
+
+If you don't have a z/OS system handy, talk to me offlist and I can put
+you in touch with some people at IBM who can make development resources
+available. Failing that, UDB on Linux for Z would be a good choice, and
+there is a UDB Community Edition release for that platform (as well as
+Intel and POWER).
+
+> - read and understand the code of the different catalog backends.
+> - start with one of the existing catalog backends - SQLite, MySQL,
+> PostgreSQL - and start migrating it to DB2 SQL.
+
+I did a little bit of looking at this a while back. Pay very close
+attention to the Postgres back end; Postgres is very similar in behavior
+and manner to DB/2 (both are picky about standards compliance, and have
+a lot of the same quirks).
+
+I have a lot of DB/2 types around here; I can probably help you with
+queries.
+

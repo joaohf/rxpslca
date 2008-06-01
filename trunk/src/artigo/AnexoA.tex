@@ -1,0 +1,90 @@
+% Copyright (c) 2008, João Henrique Ferreira de Freitas
+% All rights reserved.
+% 
+% Redistribution and use in source and binary forms, with or without modification,
+% are permitted provided that the following conditions are met:
+% 
+%     * Redistributions of source code must retain the above copyright notice,
+%       this list of conditions and the following disclaimer.
+%     * Redistributions in binary form must reproduce the above copyright notice,
+%       this list of conditions and the following disclaimer in the documentation and/or 
+%       other materials provided with the distribution.
+%     * Neither the name of the <ORGANIZATION> nor the names of its contributors may
+%       be used to endorse or promote products derived from this software without 
+%       specific prior written permission.
+% 
+% THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY 
+% EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+% OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
+% SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+% SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
+% OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+% HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+% OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+% SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+% 
+% $Id$
+
+\section{Anexo A} \label{sec:anexoa}
+
+\subsection{Exemplo de uma feature request}\label{sec:anexoa:featurereq}
+
+\begin{Verbatim}[frame=single, fontsize=\tiny, numbers=left, label=\url{http://www.bacula.org/en/?page=projects}]
+Item 34:  Commercial database support
+  Origin: Russell Howe 
+  Date:   26 July 2006
+  Status:
+
+  What:   It would be nice for the database backend to support more 
+          databases. I'm thinking of SQL Server at the moment, but I guess Oracle, 
+          DB2, MaxDB, etc are all candidates. SQL Server would presumably be 
+          implemented using FreeTDS or maybe an ODBC library?
+
+  Why:    We only really have one database server, which is MS SQL Server 
+          2000. Maintaining a second one for the backup software (we grew out of 
+          SQLite, which I liked, but which didn't work so well with our database 
+          size). We don't really have a machine with the resources to run 
+          postgres, and would rather only maintain a single DBMS. We're stuck with 
+          SQL Server because pretty much all the company's custom applications 
+          (written by consultants) are locked into SQL Server 2000. I can imagine 
+          this scenario is fairly common, and it would be nice to use the existing 
+          properly specced database server for storing Bacula's catalog, rather 
+          than having to run a second DBMS.                                          
+\end{Verbatim}
+
+\subsection{Definição de requisitos iniciais}\label{sec:anexoa:baculalibdbi}
+
+\begin{Verbatim}[frame=single, fontsize=\tiny ,numbers=left]
+Definição do escopo:
+
+   * Implementar uma camada de abstração utilizando DBI (Database Abstraction Layer) 
+     no qual é possível utilizar diversos bancos de dados como catálogo.
+
+   * Motivação: atualmente o Bacula não conta com nenhum banco de dados proprietário 
+     podendo ser um pouco restrito a sua ação em grandes ambientes coorporativos. 
+     Implementando uma abstração é possivel utilizar qualquer banco de dados.
+
+Levantamento de Requisitos:
+
+   * Requisitos não funcionais
+      * RNF-0001: O acesso ao banco de dados deve ser rápido, ou seja, não impactando na
+        performance do acesso se comparado com a utilização do Bacula com drivers nativos
+        (Mysql, Postgresql, SQLite).
+      * RNF-0002: O tempo de cada consulta deve ser menor igual ou menor se comparado
+        com os drivers nativos.
+      * RNF-0003: Deve ser de fácil instalação e configuração com as opções configuradas
+        via arquivo de configuração padrão do Bacula
+      * RNF-0004: A licença da biblioteca de abstração utilizada deve ser compatível
+        com a licença adotada pelo Bacula
+      * RFN-0005: A biblioteca deve ter suporte a carga dinâmica
+      * RNF-0006: O novo catálogo deve ter as mesmas funcionalidades já implementadas
+        para os bancos de dados Postgresql, Mysql e SQLite
+
+   *   Requisitos funcionais
+      * RF-0001: O arquivo de configuração deverá ter opções para declarar o tipo do 
+        banco de dados utilizado e localização dos drivers no sistema operacional.
+      * RF-0002: O sistema deverá avisar e abortar as operações caso ocorra algum problema
+        de configuração ou impossibilidade de conexão com o banco de dados.
+      * RF-0002: As funções e maneiras de funcionamento deverão ser semelhantes ao já
+        implementado utilizando os bancos de dados mysql e postgresql.
+\end{Verbatim}

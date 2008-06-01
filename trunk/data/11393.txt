@@ -1,0 +1,37 @@
+From: João Henrique Freitas <joaohf <at> gmail.com>
+Subject: Re:_libdbi_backend_to_catalog_database
+Newsgroups: gmane.comp.sysutils.backup.bacula.devel
+Date: 2008-02-22 00:00:07 GMT (5 weeks, 2 days, 3 hours and 8 minutes ago)
+Hello
+
+Attached is the dbi patch for Bacula.
+
+To use, are necessary libdbi-0.8.3 and libdbi-drivers-0.8.3 and Bacula
+trunk code with ./configure --with-dbi
+
+Last, configuring bacula-dir.conf with:
+
+Catalog {
+  Name = MyCatalog
+  dbdriver = "dbi:postgresql"; dbport = 5432; dbaddress = 127.0.0.1
+  dbname = regress; user = regress; password = ""
+}
+
+dbdriver can be: dbi:mysql and dbi:postgresql. In the future can be
+all drivers supported by libdbi.
+
+The following itens need some work or review:
+
+1- Implement bath insert with dbi
+2- Review the options ./configure --with-dbi
+3- To solve/review the make install when ./configure --with-dbi.
+Currently,the database scripts don't  is installed on system by make
+install command.
+4- Review in bscan patchs
+5- Documentation to install, configure and compiling bacula and libdbi
+
+Any question I am available.
+
+Thanks
+Attachment_(dbi.c): text/x-csrc, 27 KiB
+Attachment_(trunk-dbi.patch): text/x-diff, 38 KiB

@@ -1,0 +1,34 @@
+From: Kern Sibbald <kern <at> sibbald.com>
+Subject: Re:_libdbi_backend_to_catalog_database
+Newsgroups: gmane.comp.sysutils.backup.bacula.devel
+Date: 2008-02-23 09:06:54 GMT (6 weeks, 11 hours and 40 minutes ago)
+On Saturday 23 February 2008 03.07:05 João Henrique Freitas wrote:
+
+> >  > The following itens need some work or review:
+> >  >
+> >  > 1- Implement bath insert with dbi
+>
+> Now, I will starting this item.
+
+Yes, this is a bit complicated, but it is an important item for performance.
+If you want to understand better how it works, you can read the document:
+
+ docs/techlogs/batch_insert_documentation.odt
+
+>
+> >  > 2- Review the options ./configure --with-dbi
+
+What needs reviewing here?
+
+> >  > 3- To solve/review the make install when ./configure --with-dbi.
+> >  > Currently,the database scripts don't  is installed on system by make
+> >  > install command.
+
+Can you explain the make install problem a bit more?  i.e. exactly what
+scripts need to be installed?
+
+> >  > 4- Review in bscan patchs
+> >  > 5- Documentation to install, configure and compiling bacula and libdbi
+
+Kern
+

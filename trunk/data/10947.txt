@@ -1,0 +1,41 @@
+From: Kern Sibbald <kern <at> sibbald.com>
+Subject: Re:_catalog_backend_to_IBM_DB2
+Newsgroups: gmane.comp.sysutils.backup.bacula.devel
+Date: 2007-12-03 14:19:58 GMT (16 weeks, 5 days, 12 hours and 48 minutes ago)
+On Monday 03 December 2007 13:06, João Henrique Freitas wrote:
+> Ok,
+>
+> Discussion about license is much serious and do not can have any mistakes.
+
+Yes, I agree that it is better not to make any mistakes, but what is more
+important is your intention, which seems to me from what you wrote below to
+be perfectly OK.
+
+>
+> I will search about license between DB2 and Bacula. When take some result,
+> I post here.
+>
+> Kern, my intentions is to do this work to run in any platform not only for
+> mainframe.
+
+OK, that is good.  After that the most important thing is to understand
+*exactly* what files Bacula will need to be able to build the Bacula  DB2
+driver and what their license is.
+
+The other critical issue is the availability of those files: that is can
+anyone get them, or are they available only to certain people and under what
+conditions.  At an absolute minimum, the Bacula project must be able to
+possess all files needed to build Bacula.  If that is not the case, then it
+would be pretty much impossible to include the DB2 driver.  The project also
+needs to be able to distribute at least the binaries, which from the license
+you listed seems to be OK.
+
+The next thing that is not a requirement but is important is that any user who
+wants to get those files to build the DB2 driver should have access to them.
+This would permit anyone to build the driver and not just the project.  This
+is not an absolute requirement, but without it, there is a serious conflict
+with the spirit of the GPL.
+
+Best regards,
+
+Kern

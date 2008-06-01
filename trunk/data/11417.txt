@@ -1,0 +1,45 @@
+From: Jacek Konieczny <jajcus <at> jajcus.net>
+Subject: Re:_libdbi_backend_to_catalog_database
+Newsgroups: gmane.comp.sysutils.backup.bacula.devel
+Date: 2008-02-24 20:24:21 GMT (5 weeks, 6 days and 23 minutes ago)
+On Sun, Feb 24, 2008 at 09:02:59PM +0100, Kern Sibbald wrote:
+> I think you should add a new configure option:
+>
+>   --with-dbi-driver=xxx
+>
+> this will be a bit complicated, because you will need to check if xxx is one
+> of our supported databases, then find the path to the program so that it can
+> be properly put into the scripts so that the tables will be created.
+> You need to set two variables for substitution:
+>
+>    SQL_BINDIR       points to directory where binary program resides
+>    DB_TYPE           the name of the binary program (e.g. pgres, mysql, ...)
+>
+> Once you have defined those two substitution variables in configure.in,
+> everything should work correctly.
+
+But then we loose part the flexibility which dbi gives us otherwise. I
+always hated that database backend of bacula was configured
+compile-time. This way it was impossible to create generic binary
+packages with Bacula. So in the PLD (Linux distribution I make some packages
+for) we provide binary bacula packages with sqlite support (the worst
+backend, but with the least extra requirements like a server set up) and
+if anyone wanted something else he had to compile the packages manually
+with special options.
+
+So, I was very happy when read about the DBI support. That would solve
+the last Bacula problem bothering me. But the suggestion above would
+break the thing again.
+
+IMHO it should be possible to compile Bacula in a such way so it could
+work with any database, depending only on the runtime configuration and,
+maybe, simple manual database setup (calling the right scripts to
+initialize the database).
+
+I am sure that many Linux distribution will include usable Bacula
+packages (not limited to single database engine like sqlite or mysql)
+when multiple database support in Bacula will be ready.
+
+Greets,
+        Jacek
+

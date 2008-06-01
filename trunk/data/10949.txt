@@ -1,0 +1,76 @@
+From: Kern Sibbald <kern <at> sibbald.com>
+Subject: Re:_catalog_backend_to_IBM_DB2
+Newsgroups: gmane.comp.sysutils.backup.bacula.devel
+Date: 2007-12-03 21:00:21 GMT (16 weeks, 5 days, 6 hours and 8 minutes ago)
+On Monday 03 December 2007 20:19, David Boyes wrote:
+> > OK, that is good.  After that the most important thing is to
+>
+> understand
+>
+> > *exactly* what files Bacula will need to be able to build the Bacula
+>
+> DB2
+>
+> > driver and what their license is.
+> > <snip>
+> > The other critical issue is the availability of those files: that is
+>
+> can
+>
+> > anyone get them, or are they available only to certain people and
+>
+> under
+>
+> > what
+> > conditions.
+>
+> The files he needs are part of the DB/2 Client Development kit, which
+> are part of DB/2. If you legitimately have DB/2 UDB or DB/2 for z/OS,
+> you have them. If you don't, then you don't, and you can't get them any
+> other way. You'd also have to take into consideration what platforms
+> support DB/2 -- DB/2 isn't on all the platforms Bacula runs on, which
+> will cause problems.
+
+As long as the project could get a copy of the necessary code, I don't see any
+problem.  The fact that DB2 isn't on all the platforms that Bacula runs on is
+not a problem -- what counts is that users have a choice and that the source
+is open and that users are not restrained from building it on their systems.
+
+>
+> Sounds like it might be smarter to implement a Bacula interface to the
+> Perl DBI:: package interface, and then the problem is permanently
+> solved, and not just for DB/2, but for just about any useful database
+> that currently exists. That would give us Oracle, Ingres, DB/2, Sybase,
+> etc w/o imposing other restrictions. There would be some restrictions on
+> what SQL statements can be fed to the DBI interface, but Bacula doesn't
+> do anything that fancy, so the restrictions would be fairly minor, IMHO.
+
+I am a bit skeptical about OBDC since all the good DBAs that I know tell me
+that it doesn't really work as it should.  Judging from the problems we have
+interfacing to SQLite, MySQL and PostgreSQL, I can understand what they are
+saying.  Also Bacula is now considerably more sophisticated in its use of SQL
+now that we have Batch Insert and bat.
+
+>
+> > The next thing that is not a requirement but is important is that any
+>
+> user
+>
+> > who
+> > wants to get those files to build the DB2 driver should have access to
+> > them.
+>
+> See above.
+>
+
+After thinking about it a bit, it seems to me that both Oracle and DB2 rather
+freely provide developer's kits to pretty much any one who wants one -- that
+would resolve the problem of availability of the interface code.  The only
+other issue is the problem of incompatible licenses, which is much less of a
+problem now that Bacula's code is "clean": i.e. written by me; code with BSD
+3 clause license; or written by contributors that have signed the FSFE FLA.
+
+Best regards,
+
+Kern
+

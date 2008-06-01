@@ -1,0 +1,22 @@
+From: João Henrique Freitas <joaohf <at> gmail.com>
+Subject: Re:_libdbi_backend_to_catalog_database
+Newsgroups: gmane.comp.sysutils.backup.bacula.devel
+Date: 2008-02-26 00:29:17 GMT (5 weeks, 4 days, 20 hours and 18 minutes ago)
+Hello,
+
+Kern, this patch fix the make install question without break things.
+
+So far only mysql and postgresql.
+
+./configure --with-dbi --with-dbi-driver=mysql will configure the
+scripts to databases. The output is:
+
+  Statically Linked CONS:     no
+  Database type:              mysql                   <----------------------
+  Database lib:               -L/usr/local/lib -ldbi  <----------------------
+-
+  Database name:              bacula
+  Database user:              bacula
+
+
+

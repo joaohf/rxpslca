@@ -1,0 +1,156 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+  <head>
+    <title>Gmane -- Mail To News And Back Again</title>
+    <link href="http://gmane.org/img/gmane.css" rel="stylesheet" type="text/css">
+    <link rel="SHORTCUT ICON" href="http://gmane.org/favicon.ico">
+</head>
+<body bgcolor=white text=black class=main>
+  <table cellpadding=5 cellspacing=10 class="main">
+  <tr valign=top>
+  <td class="maintd">
+  <div class="tdiv">
+  <div>
+  <a href="http://gmane.org/">Home</a><br>
+  <a href="http://dir.gmane.org/">Reading</a><br>
+  <a href="http://search.gmane.org">Searching</a><br>
+  <a href="http://gmane.org/subscribe.php">Subscribe</a><br>
+  <a href="http://gmane.org/sponsors.php">Sponsors</a><br>
+  <a href="http://gmane.org/stats.php">Statistics</a><br>
+  <a href="http://gmane.org/post.php">Posting</a><br>
+  <a href="http://gmane.org/contact.php">Contact</a><br>
+  <a href="http://gmane.org/spam-control.php">Spam</a><br>
+  <a href="http://gmane.org/find.php">Lists</a><br>
+  <a href="http://gmane.org/links.php">Links</a><br>
+<a href="http://gmane.org/about.php">About</a><br>
+<a href="http://gmane.org/host.php">Hosting</a><br>
+<a href="http://gmane.org/filter.php">Filtering</a><br>
+<a href="http://gmane.org/features.php">Features</a>
+<a href="http://gmane.org/dist.php">Download</a><br>
+<a href="http://gmane.org/logo.php">Marketing</a><br>
+<a href="http://gmane.org/import.php">Archives</a><br>
+<a href="http://weaver.gmane.org/">Weaver</a><br>
+  <a href="http://gmane.org/faq.php">FAQ</a><br>
+  &nbsp;<br>
+  </div>
+  <div class="ltd">
+  <!-- <img src="http://gmane.org/img/gmane-25.png" width=25 height=25 alt="Gmane"> -->
+  </div>
+  </div>
+  </td>
+  <td align=center class="maintd">
+  <a href="http://gmane.org/"><img src="http://gmane.org/img/gmane-rot.png" alt="Gmane" border=0></a>
+  </td>
+  <td class="bodytd">  
+<div class="headers">
+<div class="face">
+<a target="_top" href="http://ftp.cs.indiana.edu/pub/faces/picons/"><img border=0 alt="Picon" src="http://cache.gmane.org//gmane/comp/sysutils/backup/bacula/devel/11415-picon-001.gif"></a>
+</div>
+From: João Henrique Freitas &lt;joaohf &lt;at&gt; gmail.com&gt;<br>
+Subject: <a target="_top" rel="nofollow" href="http://news.gmane.org/find-root.php?message_id=%3c88e33d220802241143t3899cf5cxced1c0634b1fea2c%40mail.gmail.com%3e">Re: libdbi backend to catalog database</a><br>
+Newsgroups: <a href="http://news.gmane.org/gmane.comp.sysutils.backup.bacula.devel" target="_top">gmane.comp.sysutils.backup.bacula.devel</a><br>
+Date: 2008-02-24 19:43:54 GMT
+ (5 weeks, 6 days, 1 hour and 3 minutes ago)<br></div>
+<pre>
+Hello,
+
+&gt;
+&gt;  &gt; &gt;  &gt; 2- Review the options ./configure --with-dbi
+&gt;
+&gt;  What needs reviewing here?
+&gt;
+&gt;
+&gt;  &gt; &gt;  &gt; 3- To solve/review the make install when ./configure --with-dbi.
+&gt;  &gt; &gt;  &gt; Currently,the database scripts don't  is installed on system by make
+&gt;  &gt; &gt;  &gt; install command.
+&gt;
+&gt;  Can you explain the make install problem a bit more?  i.e. exactly what
+&gt;  scripts need to be installed?
+&gt;
+&gt;
+Yes,
+
+Traditionaly, if I need install Bacula with mysql, I do:
+./configure --with-mysql; make; make install
+
+And in my /etc<i>/bacula/</i> some scripts has installed to create the
+databases like make_bacula_tables or create_bacula_databases.
+
+But if I need libdbi, make don't install any scripts. Think about this
+I don't found a good solution.
+
+Make install do not install any scripts or them install every script
+to all supported  database, like mysql and postgresql and in
+/etc/bacula we will found:
+
+create_mysql_database
+create_postgresql_database
+drop_mysql_database
+drop_postgresql_database
+drop_mysql_tables
+drop_postgresql_tables
+.....
+
+And the user choice what script need to run.
+
+Maybe in configure script is the better create a second option to use
+in conjunction --with-dbi option. Like --with-dbd, if the user enter
+--with-dbd=mysql, the scripts for mysql will be installaed. If not
+enter the --with-dbd every scripts for all databases can be installed
+or nothing scripts is installed.
+
+That is my doubt.
+
+&gt;
+&gt;  &gt; &gt;  &gt; 4- Review in bscan patchs
+You anwser my question in past mail
+
+&gt;  &gt; &gt;  &gt; 5- Documentation to install, configure and compiling bacula and libdbi
+In progress..
+
+-------------------------------------------------------------------------
+This SF.net email is sponsored by: Microsoft
+Defy all challenges. Microsoft(R) Visual Studio 2008.
+<a rel="nofollow" href="http://clk.atdmt.com/MRT/go/vse0120000070mrt/direct/01/" target="_top">http://clk.atdmt.com/MRT/go/vse0120000070mrt/direct/01/</a>
+</pre>
+<script type="text/javascript">
+document.domain = 'gmane.org';
+document.title = 'Re: libdbi backend to catalog database';
+</script>
+<td rowspan=2 class="listid">
+<a href="http://dir.gmane.org/gmane.comp.sysutils.backup.bacula.devel">
+<img border=0 src="http://gmane.org/paint-list-id.php?group=gmane.comp.sysutils.backup.bacula.devel">
+</a>
+</td> 
+</td>
+</tr>
+<tr>
+<td class="bads" colspan=2>
+&nbsp;
+<!--
+Get rid of ads<br><a href="http://gmane.org/donate.php">Donate to Gmane</a>
+-->
+</td>
+<td class="maintd" colspan=1 align=left>
+<script type="text/javascript"><!--
+google_ad_client = "pub-5884878215917141";
+google_alternate_ad_url = "http://gmane.org/blank.php";
+google_ad_width = 728;
+google_ad_height = 90;
+google_ad_format = "728x90_as";
+google_ad_channel ="";
+google_page_url = document.location;
+google_color_border = "FFFFFF";
+google_color_bg = "FFFFFF";
+google_color_link = "002390";
+google_color_url = "000000";
+google_color_text = "000000";
+//--></script>
+<script type="text/javascript"
+  src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script>
+  </td>
+  </tr>
+  </table>
+  </body>
+</html>

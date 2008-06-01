@@ -1,0 +1,93 @@
+From: Kern Sibbald <kern <at> sibbald.com>
+Subject: Re:_libdbi_backend_to_catalog_database
+Newsgroups: gmane.comp.sysutils.backup.bacula.devel
+Date: 2008-02-01 08:09:25 GMT (8 weeks, 1 day, 18 hours and 59 minutes ago)
+Hello,
+
+I am really pleased to see that you are making progress.  Please don't forget
+to email me a copy of the code, in its current state.  Doing so, can avoid
+doing more work later as I will be able to give you early comments.
+
+Concerning the design problem where you need to know the driver type:  I have
+been planning to turn the drivers into shared objects at some point and so
+what you are asking for is what will also be needed at that point.
+
+I would be interested to hear comments from other people on this list, but
+rather than overload an existing directive my inclination would be to create
+a new directive named:
+
+  DB Driver = "mysql" ...
+
+or in your case it can be:
+
+  DB Driver = "libdbi:mysql"  or "libdbi:postgres", ...
+
+Note, once we have shared objects, in your case, two pieces of information are
+needed by Bacula: 1. your driver name (libdbi or whatever you want), and 2.
+the driver you are going to load.  Obviously, in the current situation where
+the Bacula driver is compiled in, the "libdbi" is not currently needed, but
+that won't hurt anything.
+
+Then make a new db_ call which would be:
+
+  db_load_driver(JCR *jcr, const char *db_driver);
+
+At the moment, this would do nothing except save the name passed in the jcr
+structure.  Then in your libdbi db_init_database() code, you will be able to
+parse the name to find what driver to call.  Later, the db_load_driver() code
+will be enhanced to actually load the appropriate shared object library ...
+
+If everyone agrees on this, I'll be happy to add the necessary "core" code for
+you.
+
+Best regards,
+
+Kern
+
+On Friday 01 February 2008 02.03:31 João Henrique Freitas wrote:
+> Hello,
+>
+> This is a status report of the work to implement libdbi in Bacula.
+>
+> In my tests *All regression tests running*. Now I fix some things
+> after post the code here.
+>
+> I have a design problem:
+>
+> The libdbi API need know what dbms we want to use and load the correct
+> driver. For exemple mysql, pgsql, sqlite3, etc...
+>
+> Actually, in mysql.c, postgresql.c and dbi.c the scope of funcion
+> db_init_database is:
+>
+>  B_DB *
+> db_init_database(JCR *jcr, const char *db_name, const char *db_user,
+> const char *db_password,
+>                  const char *db_address, int db_port, const char
+> *db_socket, int mult_db_connections)
+>
+> Is possible to add one more argument like char *db_type, this indicate
+> what driver libdbi will use?. So Bacula uses db_init_database  in
+> various places... and need to change them too.
+>
+> OR
+>
+> The argument char *db_name would be: mysql:bacula where mysql indicate
+> a driver to libdbi and bacula is the name of database.
+>
+> Like this in bacula-dir.conf:
+>
+> Catalog {
+>   Name = MyCatalog
+>   dbaddress = 127.0.0.1; dbport = 5432; dbname = "mysql:bacula"; user
+> = bacula; password = "bacula"
+> }
+>
+> On db_init_database, we split db_name and everything will be done
+> right without change in others places of the code.
+>
+>
+> I don't want to change others places of Bacula. What is the best solution?
+>
+> Thanks
+

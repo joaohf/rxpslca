@@ -1,0 +1,82 @@
+% Copyright (c) 2008, João Henrique Ferreira de Freitas
+% All rights reserved.
+% 
+% Redistribution and use in source and binary forms, with or without modification,
+% are permitted provided that the following conditions are met:
+% 
+%     * Redistributions of source code must retain the above copyright notice,
+%       this list of conditions and the following disclaimer.
+%     * Redistributions in binary form must reproduce the above copyright notice,
+%       this list of conditions and the following disclaimer in the documentation and/or 
+%       other materials provided with the distribution.
+%     * Neither the name of the <ORGANIZATION> nor the names of its contributors may
+%       be used to endorse or promote products derived from this software without 
+%       specific prior written permission.
+% 
+% THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY 
+% EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+% OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
+% SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+% SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
+% OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+% HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+% OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+% SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+% 
+% $Id$
+
+\section{Anexo D: Emails trocados na lista de desenvolvimento do Bacula} \label{sec:anexod}
+Neste anexo, apresentamos os principais emails e discussões ocorridas na lista de desenvolvedores do projeto Bacula. 
+
+\subsection{Feedback de desenvolvedores}\label{sec:anexod:feedback}
+% Cada email é um arquivo .tex separado, assim permite o comentário 
+Primeira mensagem postada na lista de desenvolvedores do projeto Bacula no qual demonstra os objetivos e solitação de opinião dos desenvolvedores. A idéia inicial era fazer um driver de acesso para o banco de dados IBM DB2.
+\input{bacula-devel/10167}
+
+Linhas 31 a 40 demonstram uma recomendação para a implementação
+\input{bacula-devel/10176}
+
+Linhas 7 a 15 demonstram a preocupação do projeto a respeito da licença das bibliotecas envolvidas. Basicamente, o projeto Bacula possue alguns conflitos com outros softwares que utilizam uma licença proprietária. Esta limitação  impediu a idéia original da contribuição.
+\input{bacula-devel/10178}
+
+\input{bacula-devel/10947}
+
+Outro desenvolvedor expõe suas opiniões e limitações sobre o desenvolvimento do driver para DB2. Além de sugerir a implementação de uma interface para banco de dados. Neste caso utilizando uma técnica conhecida como Database Abstraction Interface (DBI) no qual encapsula todas as API necessárias para comunicação com o SGBD via uma única API. 
+\input{bacula-devel/10948}
+
+Linhas 66 a 71 demonstram a preocupação do lider do projeto Bacula em relação a licença, reafirmando as licenças permitidas no projeto.
+\input{bacula-devel/10949}
+
+Linhas 24 a 28 definem melhor oque é a DBI, segundo desenvolvedor
+\input{bacula-devel/10951}
+
+Após um período de exploração do conceito de DBI e possível utilização no projeto, retomamos a discussão apresentando a possível solução (linhas 10 a 13), objetivos (linhas 17 a 20) e motivações (linhas 22 a 26).
+\input{bacula-devel/10972}
+
+Aceitação do lider do projeto.
+\input{bacula-devel/10975}
+
+Aprovação da idéia pelo mesmo desenvolvedor que, anteriormente, sugerio a utilização da DBI.
+\input{bacula-devel/10980}
+
+\subsection{Contorno de problemas}\label{sec:anexod:problemas}
+A seguir dois exemplos relacionados a um problema encontrado no design do Bacula no qual impossibilitava a utilização da biblioteca libdbi. A situação foi sanada modificando o modo como a função principal da camada de banco de dados do Bacula era chamada. As modificações necessárias foram implementadas pelo gerente do projeto.
+\input{bacula-devel/11241}
+\input{bacula-devel/11242}
+\subsection{Submissão do patch libdbi}\label{sec:anexod:submissao}
+A seguir, exemplos de submissões feitas ao longo da experiência mostrando os vários tipos de submissões realizadas.
+\subsubsection{Exemplo de submissão temporal}\label{sec:anexod:submissaotemporal}
+Publicação do patch \patchshort na lista de desenvolvimento. As linhas 23 a 31 mostram as tarefas pendentes.
+\input{bacula-devel/11393}
+%\input{bacula-devel/11405}
+\subsubsection{Exemplo de submissão de finalização}\label{sec:anexod:submissaofinal}
+% TODO
+\subsubsection{Exemplo de submissão de manutenção}\label{sec:anexod:submissaomanutencao}
+A seguir mostramos o desenrolar de algumas tarefas pendentes. A primeira tarefa era a implementação do suporte a \textit{batch insert} para melhoramento de performance do Bacula. Inicialmente tinhamos planejado não implementá-la, pelo menos na versão inicial do patch. Entretanto percebemos que era necessário devido ao aumento da performance do software.
+\input{bacula-devel/11407}
+Na mesagens seguintes, discutimos sobre alguns problemas na instalação dos scripts de configuração de banco de dados utilizado pelo Bacula. Em resumo, quando o Bacula era compilado com suporte a libdbi, nenhum script de banco de dados era instalado. Felizmente, conseguimos resolver o problema utilizando as sugestões discutidas nos emails.
+\input{bacula-devel/11415}
+\input{bacula-devel/11416}
+\input{bacula-devel/11420}
+\input{bacula-devel/11441}
+\input{bacula-devel/11460}

@@ -1,0 +1,17 @@
+From: Kern Sibbald <kern <at> sibbald.com>
+Subject: Re:_libdbi_backend_to_catalog_database
+Newsgroups: gmane.comp.sysutils.backup.bacula.devel
+Date: 2008-02-24 20:59:20 GMT (5 weeks, 5 days, 23 hours and 48 minutes ago)
+On Sunday 24 February 2008 21.38:03 João Henrique Freitas wrote:
+> Thanks for explanations.
+>
+> I will think more about this and do some explorations.
+
+I haven't really looked at where DB_TYPE is used, but we might want to
+implement a DB_TYPE and a new DB_PROG variable so that we can keep your DBI
+type ...
+
+Kern
+
+PS: Don't hesitate to ask if you need help.  Modifying such varables or adding
+a new one is quite easy for me ...

@@ -1,0 +1,243 @@
+From: Kern Sibbald <kern <at> sibbald.com>
+Subject: Re:_catalog_backend_to_IBM_DB2
+Newsgroups: gmane.comp.sysutils.backup.bacula.devel
+Date: 2007-12-03 14:19:58 GMT (16 weeks, 5 days, 12 hours and 48 minutes ago)
+On Monday 03 December 2007 13:06, João Henrique Freitas wrote:
+> Ok,
+>
+> Discussion about license is much serious and do not can have any mistakes.
+
+Yes, I agree that it is better not to make any mistakes, but what is more
+important is your intention, which seems to me from what you wrote below to
+be perfectly OK.
+
+>
+> I will search about license between DB2 and Bacula. When take some result,
+> I post here.
+>
+> Kern, my intentions is to do this work to run in any platform not only for
+> mainframe.
+
+OK, that is good.  After that the most important thing is to understand
+*exactly* what files Bacula will need to be able to build the Bacula  DB2
+driver and what their license is.
+
+The other critical issue is the availability of those files: that is can
+anyone get them, or are they available only to certain people and under what
+conditions.  At an absolute minimum, the Bacula project must be able to
+possess all files needed to build Bacula.  If that is not the case, then it
+would be pretty much impossible to include the DB2 driver.  The project also
+needs to be able to distribute at least the binaries, which from the license
+you listed seems to be OK.
+
+The next thing that is not a requirement but is important is that any user who
+wants to get those files to build the DB2 driver should have access to them.
+This would permit anyone to build the driver and not just the project.  This
+is not an absolute requirement, but without it, there is a serious conflict
+with the spirit of the GPL.
+
+Best regards,
+
+Kern
+
+>
+> Thanks
+>
+> On Dec 1, 2007 9:28 AM, Kern Sibbald <kern <at> sibbald.com> wrote:
+> > On Friday 30 November 2007 22:16, David Boyes wrote:
+> > > > > Redistribution Information
+> > > > >
+> > > > > If You have developed an application that is dependent upon the
+> >
+> > files
+> >
+> > > > > or modules listed below or located in the directory named below,
+> > > > > You may distribute these files or modules, subject to the following
+> >
+> > terms:
+> > > > > 1) The files or modules must be in object code.
+> > > >
+> > > > The above is very poor English coming from IBM.  I have no idea what
+> >
+> > it
+> >
+> > > > really
+> > > > means.
+> > >
+> > > IANAL, however what this usually means when talking to IBM is that you
+> >
+> > can
+> >
+> > > compile and distribute modules based on these source files, but you
+> >
+> > cannot
+> >
+> > > distribute any source of the IBM-supplied bits itself. If the modules
+> >
+> > are
+> >
+> > > distributed from IBM in binary form only, you cannot include them in
+> >
+> > your
+> >
+> > > package other than by reference via dynamic linking.
+> > >
+> > > > > 2) You will indemnify IBM or third parties that provide IBM
+> > > > > products ("Third Parties") from and against any third party claim
+> > > > > arising out
+> >
+> > of
+> >
+> > > > the
+> > > >
+> > > > > use or distribution of Your application.
+> > >
+> > > Usual "we didn't make it, not our fault" clause.
+> > >
+> > > > > 3) You may not use the same path name as the original
+> > > > > files/modules.
+> > > >
+> > > > What does the above mean -- I cannot understand why such a
+> > > > restriction would
+> > > > be needed.
+> > >
+> > > It means you can't create something that replaces the IBM distributed
+> >
+> > files
+> >
+> > > and call it DB/2 UDB Client. Also, on AIX, you're expected to register
+> >
+> > the
+> >
+> > > pathname where your stuff goes with IBM if you expect it to go into
+> > > /usr/lpp with all the other IBM-supplied stuff. They do this to
+> > > minimize conflicts between file locations, and incidentally, to force
+> > > their own developers to keep the files for a single product in one
+> > > place (rather
+> >
+> > than
+> >
+> > > scattering them around the filesystem like Microsoft or CA is wont to
+> >
+> > do).
+> >
+> > > > > 4) You may not use IBM's or Third Parties' names or trademarks in
+> > > > > connection with the marketing of Your applications without IBM's or
+> > > >
+> > > > Third
+> > > >
+> > > > > Parties' prior written consent.
+> > > >
+> > > > Well, the above is a bit absurd.  It apparently says that you cannot
+> >
+> > use
+> >
+> > > > the
+> > > > name DB2 in "marketing" Bacula, which means that it is useless to
+> >
+> > develop
+> >
+> > > > a
+> > > > DB2 interface since we cannot say that we have a DB2 interface.
+> > >
+> > > They have to have this in the agreement or THEY lose the ability to
+> > > prosecute if someone *does* hijack the trademark. They have to enforce
+> >
+> > the
+> >
+> > > trademark or lose the right to it entirely. See Kleenex/Jello/Xerox
+> > > machine/etc.
+> > >
+> > > There are a set of rules for using the DB/2 trademark published on the
+> >
+> > IBM
+> >
+> > > WWW site, and if you register as a one of their developers, in exchange
+> >
+> > you
+> >
+> > > get limited rights to reference the trademarks according to the rules.
+> > > They're not onerous; it comes down to you just have to spell it
+> >
+> > correctly
+> >
+> > > and not cause them grief about what you do with it.
+> > >
+> > > > > 5) IBM or Third Parties provide copies of these files or modules
+> > > > > "AS
+> > > >
+> > > > IS,"
+> > > >
+> > > > > i.e., You are responsible for all technical assistance for Your
+> > > > > application. 6) In Your license agreement with the recipient, You
+> >
+> > will
+> >
+> > > > > notify the recipient that these files or modules may not be 1) used
+> >
+> > for
+> >
+> > > > any
+> > > >
+> > > > > purpose other than to enable the application, 2) copied (except for
+> > > >
+> > > > backup
+> > > >
+> > > > > purposes), 3) further distributed, or 4) reverse assembled, reverse
+> > > > > compiled, or otherwise translated.
+> > >
+> > > Not our fault, not our fault, not our fault, and if somebody misuses
+> >
+> > your
+> >
+> > > product to do something illegal, then it's still your fault. Welcome to
+> > > American IP law.
+> > >
+> > > *gag*
+> >
+> > Well, all the above seem to have some solution or workaround, but it will
+> > take
+> > a bit of organization.
+> >
+> > > > I think we need to understand the above a bit better before
+> >
+> > continuing.
+> >
+> > > > If
+> > > > you are writing something that work *only* on an IBM mainframe, then
+> >
+> > it
+> >
+> > > > is not very interesting to the Bacula community and you might not get
+> > > > approval
+> > > > from us to use Bacula with the above proprietary code.  On the other
+> > > > hand, if
+> > > > you are writing a Generic DB2 Bacula driver that would work on any
+> > > > platform
+> > > > that has DB2, then it would be quite interesting.
+> > >
+> > > The DB/2 client code he's working with uses an IP socket connection to
+> >
+> > talk
+> >
+> > > to a DB/2 server. It doesn't care what platform DB/2 actually runs on
+> > > (albeit the client is supported on a subset of the platforms that
+> > > Bacula runs on).
+> >
+> > Well, linking Bacula to a shared object that is proprietary, or using
+> > header
+> > files in Bacula which are proprietary would be clearly a violation of the
+> > GPL, so be careful what you are getting yourselves into.  License
+> > violations
+> > are not much fun for the person(s) violating the license -- especially
+> > because by properly working with the project up front, you can avoid
+> > problems.
+> >
+> > Using all GPLed code inside of Bacula and in any shared objects that
+> > Bacula
+> > references, then using a socket to talk to a proprietary DB2 engine, may
+> > be
+> > permitted under the GPL (I am not 100% sure as there seem to be some
+> > differences of opinion).
+> >
+> > -------------------------------------------------------------------------

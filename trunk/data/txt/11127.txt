@@ -1,0 +1,30 @@
+From: Dan Langille <dan <at> langille.org>
+Subject: Re:_catalog_backend_to_IBM_DB2
+Newsgroups: gmane.comp.sysutils.backup.bacula.devel
+Date: 2008-01-11 12:42:19 GMT (11 weeks, 1 day, 14 hours and 26 minutes ago)
+João Henrique Freitas wrote:
+> Hello,
+>
+> I am like to report my status in libdbi interface to Bacula.
+>
+> The libdbi drivers works in Bacula (configure, make, run).
+> Not regression tests had pass yet, because I need to do a job backup worked.
+>
+> But I ran every comand in bconsole like "status dir", "list volumes"....
+>
+> Basicaly I create and code in src/cats/dbi.c, change the definitions
+> in src/cats/cats.h and add a new option in dird_conf.h dbitype.
+>
+> If someone want to see the code, please tell me. When the job backup
+> work. I report a new status here.
+
+Congratulations.  :)
+
+When you get the backup and restore working, run the regression tests
+from the regress directory in the repository.
+
+--
+Dan Langille - http://www.langille.org/
+BSDCan - The Technical BSD Conference: http://www.bsdcan.org/
+PGCon  - The PostgreSQL Conference:    http://www.pgcon.org/
+

@@ -1,0 +1,335 @@
+Arquivo contendo as referências e idéias encontradas nos textos da pesquisa bibliográfica
+\NewEntry
+Aprovados
+
+2008-02-24
+\NewFolder
+\NewEntry
+Issue and Experiences in Modeling Open Source Software Development Process
+
+- O estudo demonstra um dos aspectos encontrados durante a descoberta empirica da engenharia de processos que pode ser observada em projeto OSSD, particularmente NetBeans, Apache, Mozilla e Linux
+
+- Todos foram inicialmente analisados através das informações encontradas no web site que descrevem explicitamente o processo de desenvolvimento empregado nos projetos. 
+
+- Qualquer engenheiro ou desenvolvedor que procura entrar em um projeto OSSD ou iniciar um próprio não irá encontrar descrições ou modelos de processos necessários para suportar o projeto.
+
+- Se alguém interessadoem entender e participar de um processo OSSD, o processo necessita ser descoberto através de tentativa e erro ou por uma investigação sistemática, navagação no site do projeto, código e modelagem. 
+
+- É necessário observar os papeis do desenvolvimento, ferramentas e tarefas.
+
+- O autor utilizou uma linguagem de descrição de processos a PML (process modeling language)
+
+- O principal objetivo para a modelagem do processo é estabelecer uma narrativa informal, semi estruturada no qual pode ser analisada, comparada, e compartilhada.
+
+- Projetos OSS não reconhecem o devido valor de exaltar um processo de software. E constantemente necessitam reinvantar ou redescobrir processos da engenharia de software ao invez de seguir os já existentes modificando para as devidas necessidades e melhorando de uma maneira que estimule a produtividade e qualidade em projetos OSSD
+
+
+
+\NewEntry
+Experiences in Discovering, Modeling, and Reenaction Open Source Software Development Process
+
+- Projetos OSSD tipicamente não empregam ou prové explicitamente modelos de processo, prescrições ou esquemas outros além dos comumente encontrados tais como controle de versão e gerencia de compilação. 
+
+- Análise baseada em: análise de conteúdo; estrutura; atualizações e utilização de padrões
+
+- Tipos de artefatos gerado por projetos OSSD (arquivos de código fonte, mensagens postadas em lista públicas de discussão e foruns, web pages), eventos de atualização de artefatos (anúncio de release de versões, atualização de web pages, postar mensagens), contexto de trabalho (roadmap de releases, arquitetura do web site, sistema de comunicação utilizado) podem ser detectados, observados e extraídos através da Internet (Web). Estes dados não podem ser utilizados para elaborar todo o processo utilizado.
+
+- A visão é de um processo com contexto global, envolvendo multiplas ferramentas, diversos  tipos de artefatos e muitos papeis de desenvolvimento através de múltiplas redes interconectadas
+
+- O entendimento do domínio do problema é fundamental. Uma vez que devemos nos posicionar em qual visão iremos observar. O autor está interessado em "descobrir, modelar, simular, e discutir o desenvolvimento do processo baseado em OSSD.
+
+- O método de descoberta não foi baseado em tentativas aleatórias. O contexto de trabalho foi elucidado seguindo o domínio do problema. Alguns são listados no artigo
+
+- Cada projeto estabalece métodos próprios de interação, comunicação, liderança, controle.
+As informação são dinâmicas, novos artefatos são inclusos, outros apagados ou desatualizados.
+
+- Enquanto o respositório do código e as discussões públicas são arquivadas, é menos comum ter discussões via mensagens instântaneas ou chats arquivados.
+
+- Processo de discoberta e modelagem
+-- Primeiro: definir qual aspecto do processo queremos descobrir é necessário definir o domínio do problema também
+ 
+- O autor apresenta a utilização de um framework para capturar o processo. Para isso ele defini oque é um processo e seus componentes.
+
+- Segundo o autor a descoberta do processo específico de um projeto OSSD se inicia com uma exploração no Web space anotando quais informações estão disponíveis e onde podem ser localizadas. Esta exploração nos dá a ideía do que acontece com as ações, agentes, ferramentas e recursos, padrões de utilização a atulização.
+
+- Casos de uso podem ser utilizados para demonstrar as interrealções das ações, utilização de ferramentas e atores. Os casos de uso podem ser integrados para produzirem um conteúdo de hypermedia relacionando todas as atividades do processo.
+
+- Enfim o estudo tenta criar uma alternativa melhor para extrair o processo de um grupo de desenvolvedores a fim de melhora-lo e adapta-lo para outros projetos OSSD
+
+OSSD = Open Source Software Development, Desenvolvimento de Software Open Source
+\NewEntry
+Guiding the Discovery of Open Source Software Process with a Reference Model
+
+- Como propriamente contribuir
+
+- Cada comunidade possue seu proprio jetio de fazer as coisas
+
+- Há muitos tipos de artefatos OSS que traduzem processos e salienta sua existência. 
+
+- Artefatos comuns: webpages, chats scripts, development resources, process description (howto guides, FAQs)
+
+- Dimensões dos artefatos: 
+-- Estrutural, how project-related software development artifacts are organizad
+-- Conteudo, tipos de artefatos e informações que eles contém
+-- Pattern de uso, interação do usuário com a comunidade
+-- Pattern de atualização, atualização de conteúdo, criação e remoção
+
+- Perspectiva de um observador, limitado aos dados publicamente disponíveis nos portais dos projetos
+
+\NewEntry
+Automation the Discovering and Modeling of Open source Software Development Process
+
+\NewEntry
+Reference Model Based Open Source Software Process Discovery
+
+- Esquema de classificação dos dados extraídos
+
+- De acordo com o autor, processos são compostos por tarefas e ações atômicas. 
+Cada ação é seguida de entidades: 
+-- agentes participantes da atividade
+-- ferramentas utilizadas pelos agentes para a realização das atividades
+-- recursos que são produzidos e necessários para realizar a atividade
+-- scripts ou métodos contendo a descrição da ação
+
+- São muitos tipos de artefatos e sua presença varia de comunidade para comunidade.
+
+\NewEntry
+Applying a Reference Framework to Open Source Software Discovery
+
+
+- Em uma organização é possível determinar algumas coisas olhando para um gráfico organizacional e coisas do tipo. Já em um projeto open-source não há este tipo de artefato.
+
+- A imagem utilizada pelo autor parece ser bem interessante para abstrair a idéia da observação, exploração e análise
+
+- A directory suche as "x-test results" is positive evidence that some sort of testing is conducted.
+
+\NewEntry
+Multi Modal Modelling of Open Source Requirements Process
+
+- Geralmente encontramos nenhuma especificação de requisitos explicita ou documentos.
+
+- O processo de engenharia de requisitos é diferente do tradicional (elicitação, especificação, análise, modelagem, comunicação e gerenciamento)
+
+- Desenvolvedores OSS são também usuários finais ou administradores de produtos que eles desenvolveram, ao invez de usuários e desenvolvedores. Consequentemente, o processo de requisitos (elicitação) criados no ambiente OSS é diferente.
+
+- Software product requirements in OSSD projects are continually emerging and evolving. 
+
+\NewEntry
+Where Do Open Source Requirements Come From (And What Should We Do About It)?
+
+- Neste paper o autor levanta algumas questões relevantes sobre os requisitos open sources
+
+- Open source software requirements may come from directly the developers. No qual sabem exatamente oque querem. Se o processo de requisitos fosse mais amplo a quantidade de requisitos seria maior no sistema final
+
+- Open source software requirements may come from users of open source software
+
+- Open source software requeriments may come from the implementation of explicit standards. Baseado fortemente da interoperabilidade entre sistemas
+
+- Nenhum dos itens levantados são aptos para manter um sistema de grande escala, necessitando de levantamento mais formal
+
+- Necessita pensar mais do ponto de vista do usuário
+
+- Software melhores adaptados para os desenvolvedores e finalmente para os usuários finais
+
+\NewEntry
+Software Development Practices in Open Software Development Communities: A Comparative Case Study
+
+- Requirements analysis and specification
+- Coordinated version control, system build, and staged incremental release
+- Maintence as evolucionary redevelopment, refinement, and redistribuituon
+- Project management
+- Software tecnology transfer
+\NewEntry
+A preliminary examination of code review process in open source projects
+
+- 11 projetos observados, 4 discutidos
+
+- Baseado em perguntas sobre o tema
+
+- Examinados qualitivamente os stataments patchs
+
+- Interesse maior em patches que são enviados para a lista de desenvolvimento, revisados e discutidos
+
+- Definição de patch: é uma mudança, conserto ou melhoramento, incluindo código fonte e documentação. 
+- É parte do processo de desenvolvimento open source
+- Muitos projetos possuem guias que descrevem os requisitos para o patch e seu processo.
+
+- Poucos projetos possuem descrições em relação a conduta de aprovação do patch e revisão.
+
+- Nenhum projeto utiliza o mesmo processo de patch do outo.
+- Muitos pequenos e novos projetos não possuem statement para o processo de patch
+
+- Projetos maduros possuem guias que são utilizados durante o ciclo de desenvolvimento do projeto
+
+- Entretanto muitos dos projetos possuem elementos que descrevem um processo de patch geral no qual pode ser resumido em:
+-- Someone reports a bug or request a new feature
+-- It becames a priority
+-- There is a discussion about the bug
+-- Someone post a patch (sometimes just a work around in case of a bug) the is often some uncertainty about that
+-- People try the patch, (lazy testing) (if it fails, no view a broken patch), but ultimately a successfuly produced
+-- Once the patch is deemed acceptable, it is committed in relase in the next version
+
+- O autor faz uma comparação no qual busca as diferenças nos 4 projetos pesquisados
+
+- Projetos necessitam de contribuidores para atualização de documentação e implementação de novas funcionalidades
+- Projetos enfatizam que patches necessitam ser independentes (mudança grande de funcionalidades e mudança de formatos), completo e pequeno. Todos os projetos afirmam que patches pequenos e rápidos são mais faceis de revisar doque grande patches.
+- Patches são frequentementes ignorados ou perdidos; é de  responsabilidade do contribuidor de reenviar-los e suporta-los.
+- Todos os patches enviados por não desenvolvedores oficiais são revisados.
+
+- Mudança de funcionalidades geralmente são revisadas e depois integradas
+- A maioria dos patches são integradas e depois revisados
+
+
+- Analisando os vários guias dos projetos podemos identificar similaridades ou patterns no qual são utilizados no ciclo de desenvolvimento.
+
+- O pattern mais comum identificado é o "mediador integrador"(committer as mediator)
+
+
+- Muitos erros (91,3%) são encontrados em menos de um dia após a integração do patch
+
+
+
+
+
+
+\NewEntry
+Knowledge Work Artifacts: Kernel Cousins for Free/Open Source Softwae Devevelopment
+
+- Aborda sobre os artefatos de conhecimento gerados nos      projetos. 
+
+- Expõem os Kernel Cousins 
+
+- Arquivo de chats diários, IRC logs
+
+- IRC como escritórios virtuais para projetos 
+
+- Melhorar aproximidade com a comunidade via troca de mensagens instantâneas (IRC) assim é preciso arquiva-las 
+
+\NewEntry
+Building real F/OSS software factories: How o create development communities around outside requirements
+
+- Discorre sobre o uso de software factories
+
+- De acordo com o texto o processo clássico do software livre é: pouco definido e não tem um processo de desenvolvimento em todos os projetos definido.
+-- Desenvolvimento aberto e revisão em pares
+-- Um núcleo de poucos desenvolvedores fazendo a maioria dos trabalhos
+-- Requisitos dirigidos pelos usuários
+-- Altamente dependentes de ferramentas
+
+- A essência é a criação rápida de soluções em um ambiente de colaboração aberto
+
+- Projetos iniciam rapidamente; requisitos são definidos o mais breve possível; o desenvolvimento é distribuído entre os contribuidores em um modo colaborativo; ciclos de desenvolvimento são curtos, rápidos, interativos; reutilizáveis, flexíveis, comunidação assincrona.
+
+- É altamente necessários ferramentas para track and manage all project activity através do ciclo de vida do desenvolvimento; colaboração em documentos e design
+
+- Coordenação de equipe, envolvimento de usuários, modos de coordenação
+\NewEntry
+Process Modeling Across the Web Information Infraestructure
+
+- Rich Hypermedia concept
+
+- O autor utiliza alguns conceitos tais como hypermedia, fluxograma, PML para descrever um processo formal e ao mesmo tempo passando uma idéia didática através de esquemas gráficos
+
+- Provendo uma visão geral de como é o processo de desenvolvimento para determinados projetos em questão 
+
+- Todas as informações são extraídas de artefatos publicamente disponíveis nos portais do projeto.
+
+- A idéia fundamental é facilitar e melhorar o entendimento do processo de software utilizado nos projetos de software livre e código aberto.
+
+\NewEntry
+Producing Open Source Software How to Run a Successful Free Software Project
+
+
+- 
+	pg 11 
+		But First, Look Around
+		fala sobre o início de um projeto SL/CA e as condições necessárias
+		Missão Clara
+		Licença
+		Este capítulo apresenta alguns tópicos que podem ser utilizados para identificar um bom projeto para contribuição pois especifica os elementos necessários iniciais
+		If someone is considering contributing to the project, she'll look for developer guidelines. Developer
+guidelines are not so much technical as social: they explain how the developers interact with each other
+and with the users, and ultimately how things get done.
+	pg 29 
+		What a Project Needs
+			Proporciona informações gerais sobre oque um projeto de SL/CA deve ter para iniciar e como cada ferramenta funciona. Posso pegar os itens e fazer uma checklist no qual o contribuidor deverá se atentar antes de iniciar a contribuição com o projeto.
+
+
+
+
+
+Quality Assurance (i.e., Professional Testing)
+      In proprietary software development, it is normal to have teams of people dedicated solely to quality as-
+      surance: bug hunting, performance and scalability testing, interface and documentation checking, etc. As
+      a rule, these activities are not pursued as vigorously by the volunteer community on a free software
+      project. This is partly because it's hard to get volunteer labor for unglamorous work like testing, partly
+      because people tend to assume that having a large user community gives the project good testing cover-
+      age, and, in the case of performance and scalability testing, partly because volunteers often don't have
+      access to the necessary hardware resources anyway.
+pg 72
+
+
+Documentation and usability are both famous weak spots in open source projects, although I think, at
+least in the case of documentation, that the difference between free and proprietary software is fre-
+quently exaggerated. Nevertheless, it is empirically true that much open source software lacks first-class
+documentation and usability research.
+pg 74
+
+
+Transparency and verifiability are also an important part of accurate crediting, of course
+pg 76
+
+
+All of which is obvious in theory—what makes it hard in practice is that free software development en-
+vironments are bewilderingly diverse both in audiences and in communications mechanisms. Should a
+given thought be expressed in a post to the mailing list, as an annotation in the bug tracker, or as a com-
+ment in the code? When answering a question in a public forum, how much knowledge can you assume
+on the part of the reader, given that "the reader" is not only the one who asked the question in the first
+place, but all those who might see your response? How can the developers stay in constructive contact
+with the users, without getting swamped by feature requests, spurious bug reports, and general chatter?
+How do you tell when a medium has reached the limits of its capacity, and what do you do about it?
+pg 77
+
+
+
+Typically, all communications in an open source project (except sometimes IRC conversations) are
+archived. The archives are public and searchable, and have referential stability: that is, once a given
+piece of information is recorded at a particular address, it stays at that address forever.
+Use those archives as much as possible, and as conspicuously as possible. Even when you know the an-
+swer to some question off the top of your head, if you think there's a reference in the archives that con-
+tains the answer, spend the time to dig it up and present it. Every time you do that in a publicly visible
+way, some people learn for the first time that the archives are there, and that searching in them can pro-
+duce answers. Also, by referring to the archives instead of rewriting the advice, you reinforce the social
+norm against duplicating information. Why have the same answer in two different places? When the
+number of places it can be found is kept to a minimum, people who have found it before are more likely
+to remember what to search for to find it again. Well-placed references also contribute to the quality of
+search results in general, because they strengthen the targeted resource's ranking in Internet search en-
+gines.
+pg 92
+\EndFolder
+\NewEntry
+Aprovado Parcialmente
+\NewFolder
+\NewEntry
+Understanding the requirements for developing open source software systems
+
+- Requisitos em OSS pode aparecer implicito em uma mensagem de email ou em uma discussão capturada e colocada em uma página Web para revisão, elaboraçao, refutação ou refinamento.
+
+- Source code denotes requirements implementations, rather than requiriments specifications.
+
+- Community building and sustaining participation are essential and recurring activities that enable open software requirements and system implementation to emerge and persist without central corporate authority.
+
+
+- Community building requirements, community software requirements and community information shareing systems.
+
+\NewEntry
+Modular Design and the Developing of Complex Artifacts: Lessons from Free/Open Source Software
+
+- Modularidade pode ser o princípio da divisão de trabalho com rapidez de desenvolvimento
+
+- Permite desenvolvimento paralelo e contribuição de novos componentes
+
+- engenharia concorrente, divisão do trabalho, desenvolvimento descentralizado, inovação via módulos
+
+- The free availability of the source and the absence of code ownership make programming a truly public process, since good coding solutions are shared and adaped to solve similar problmes
+\EndFolder

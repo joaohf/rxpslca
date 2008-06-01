@@ -1,0 +1,172 @@
+From: João Henrique Freitas <joaohf <at> gmail.com>
+Subject: Re:_libdbi_backend_to_catalog_database
+Newsgroups: gmane.comp.sysutils.backup.bacula.devel
+Date: 2008-04-03 09:58:14 GMT (2 days, 10 hours and 49 minutes ago)
+Hello,
+
+Postgresql (and Mysql) batch inserts works. Following my regression
+tests (not all passed, fixing it now).
+
+Why I ctest not send the results to dashboard?
+
+Submit files (using xmlrpc)
+   Using XML-RPC submit method
+   Submitting to: http://regress.bacula.org:8081/Bacula/Command/ (Bacula)
+   Submit file:
+/home/jhf-notebook/posgraduacao/TCC/experiencia1/regress/Testing/20080403-0221/
+Build.xml
+   Submit file:
+/home/jhf-notebook/posgraduacao/TCC/experiencia1/regress/Testing/20080403-0221/
+Configure.xml
+   Submit file:
+/home/jhf-notebook/posgraduacao/TCC/experiencia1/regress/Testing/20080403-0221/
+Test.xml
+ Submission problem: Curl failed to perform HTTP POST request.
+curl_easy_perform() says:
+����dmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPFNpdGUgQnVpbGROYW1lPSJi��������-
+deb��
+(55) (-504)
+   Problems when submitting via XML-RPC
+
+Thanks
+
+---------------------------------------
+
+jhf-notebook <at> chiqueiro:~/posgraduacao/TCC/experiencia1/regress$
+./experimental-disk
+Na revisão 6730.
+   Site: joaohf-bacula-libdbi
+   Build name: bacula-2.3.15-02Apr08-dbi --with-dbi-driver-Linux-debian-Ubuntu
+Create new tag: 20080403-0221 - Experimental
+Start processing tests
+Configure project
+   Each . represents 1024 bytes of output
+     Size of output: 0K
+Build project
+   Each symbol represents 1024 bytes of output.
+   '!' represents an error and '*' a warning.
+    . Size of output: 0K
+   0 Compiler errors
+   0 Compiler warnings
+Test project /home/jhf-notebook/posgraduacao/TCC/experiencia1/regress
+  1/ 73 Testing all-non-root:accurate-test       Passed
+  2/ 73 Testing all-non-root:auto-label-test     Passed
+  3/ 73 Testing all-non-root:backup-bacula-tes   Passed
+  4/ 73 Testing all-non-root:backup-to-null   ***Failed
+  5/ 73 Testing all-non-root:bextract-test       Passed
+  6/ 73 Testing all-non-root:big-vol-test        Passed
+  7/ 73 Testing all-non-root:bscan-test       ***Failed
+  8/ 73 Testing all-non-root:bsr-opt-test     ^[[A   Passed
+  9/ 73 Testing all-non-root:compressed-test     Passed
+ 10/ 73 Testing all-non-root:compress-encrypt-   Passed
+ 11/ 73 Testing all-non-root:concurrent-jobs-t   Passed
+ 12/ 73 Testing all-non-root:data-encrypt-test   Passed
+ 13/ 73 Testing all-non-root:differential-test   Passed
+ 14/ 73 Testing all-non-root:encrypt-bug-test    Passed
+ 15/ 73 Testing all-non-root:fast-two-pool-te***Failed
+ 16/ 73 Testing all-non-root:fifo-test           Passed
+ 17/ 73 Testing all-non-root:four-concurrent-j   Passed
+ 18/ 73 Testing all-non-root:four-jobs-test      Passed
+ 19/ 73 Testing all-non-root:hardlink-test    ***Failed
+ 20/ 73 Testing all-non-root:incremental-2disk   Passed
+ 21/ 73 Testing all-non-root:incremental-2medi   Passed
+ 22/ 73 Testing all-non-root:incremental-test    Passed
+ 23/ 73 Testing all-non-root:maxvol2-test     ***Failed
+ 24/ 73 Testing all-non-root:maxvol-test         Passed
+ 25/ 73 Testing all-non-root:migration-jobspan***Failed
+ 26/ 73 Testing all-non-root:migration-job-tes***Failed
+ 27/ 73 Testing all-non-root:migration-time-te***Failed
+ 28/ 73 Testing all-non-root:migration-volume-***Failed
+ 29/ 73 Testing all-non-root:query-test          Passed
+ 30/ 73 Testing all-non-root:recycle-test        Passed
+ 31/ 73 Testing all-non-root:regexwhere-test     Passed
+ 32/ 73 Testing all-non-root:restore2-by-file-   Passed
+ 33/ 73 Testing all-non-root:restore-by-file-t   Passed
+ 34/ 73 Testing all-non-root:restore-disk-seek   Passed
+ 35/ 73 Testing all-non-root:runscript-test      Passed
+ 36/ 73 Testing all-non-root:scratch-pool-test   Passed
+ 37/ 73 Testing all-non-root:six-vol-test        Passed
+ 38/ 73 Testing all-non-root:span-vol-test       Passed
+ 39/ 73 Testing all-non-root:sparse-compressed   Passed
+ 40/ 73 Testing all-non-root:sparse-test         Passed
+ 41/ 73 Testing all-non-root:2drive-3pool-test   Passed
+ 42/ 73 Testing all-non-root:2drive-concurrent   Passed
+ 43/ 73 Testing all-non-root:2drive-incrementa   Passed
+ 60/ 73 Testing all-non-root:three-pool-test     Passed
+ 61/ 73 Testing all-non-root:tls-test         ***Failed
+ 62/ 73 Testing all-non-root:two-jobs-test       Passed
+ 63/ 73 Testing all-non-root:two-pool-test       Passed
+ 64/ 73 Testing all-non-root:two-vol-test        Passed
+ 65/ 73 Testing all-non-root:two-volume-test     Passed
+ 66/ 73 Testing all-non-root:verify-cat-test     Passed
+ 67/ 73 Testing all-non-root:verify-vol-test     Passed
+ 68/ 73 Testing all-non-root:weird-files2-test***Failed
+ 69/ 73 Testing all-non-root:weird-files-test ***Failed
+
+77% tests passed, 12 tests failed out of 53
+
+The following tests FAILED:
+          4 - all-non-root:backup-to-null (Failed)
+          7 - all-non-root:bscan-test (Failed)
+         15 - all-non-root:fast-two-pool-test (Failed)
+         19 - all-non-root:hardlink-test (Failed)
+         23 - all-non-root:maxvol2-test (Failed)
+         25 - all-non-root:migration-jobspan-test (Failed)
+         26 - all-non-root:migration-job-test (Failed)
+         27 - all-non-root:migration-time-test (Failed)
+         28 - all-non-root:migration-volume-test (Failed)
+         61 - all-non-root:tls-test (Failed)
+         68 - all-non-root:weird-files2-test (Failed)
+         69 - all-non-root:weird-files-test (Failed)
+Performing coverage
+ Cannot find any coverage files. Ignoring Coverage request.
+Submit files (using xmlrpc)
+   Using XML-RPC submit method
+   Submitting to: http://regress.bacula.org:8081/Bacula/Command/ (Bacula)
+   Submit file:
+/home/jhf-notebook/posgraduacao/TCC/experiencia1/regress/Testing/20080403-0221/
+Build.xml
+   Submit file:
+/home/jhf-notebook/posgraduacao/TCC/experiencia1/regress/Testing/20080403-0221/
+Configure.xml
+   Submit file:
+/home/jhf-notebook/posgraduacao/TCC/experiencia1/regress/Testing/20080403-0221/
+Test.xml
+ Submission problem: Curl failed to perform HTTP POST request.
+curl_easy_perform() says:
+����dmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPFNpdGUgQnVpbGROYW1lPSJi��������-
+deb��
+(55) (-504)
+   Problems when submitting via XML-RPC
+Errors while running CTest
+ctest failed re-running Submit
+   Site: joaohf-bacula-libdbi
+   Build name: bacula-2.3.15-02Apr08-dbi --with-dbi-driver-Linux-debian-Ubuntu
+Start processing tests
+Submit files (using xmlrpc)
+   Using XML-RPC submit method
+   Submitting to: http://regress.bacula.org:8081/Bacula/Command/ (Bacula)
+   Submit file:
+/home/jhf-notebook/posgraduacao/TCC/experiencia1/regress/Testing/20080403-0221/
+Build.xml
+   Submit file:
+/home/jhf-notebook/posgraduacao/TCC/experiencia1/regress/Testing/20080403-0221/
+Configure.xml
+   Submit file:
+/home/jhf-notebook/posgraduacao/TCC/experiencia1/regress/Testing/20080403-0221/
+Test.xml
+ Submission problem: Curl failed to perform HTTP POST request.
+curl_easy_perform() says:
+�B��dmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPFNpdGUgQnVpbGROYW1lPSJiYWN1bGEtMi4zLjE1LTAyQXByMDgtZGJpIC0td2l0aC1kYmktZHJpdmVyLUxpbnV4LWRlYmlhbi1VYnVudHUiIEJ1aWxkU3RhbXA9IjIwMDgwNDAzLT
+(-504)
+   Problems when submitting via XML-RPC
+Errors while running CTest
+
+--
+-----------------------------------------------------------
+João Henrique Freitas - joaohf_at_gmail.com
+Campinas-SP-Brasil
+BSD051283
+LPI 1
+http://joaohf.pbwiki.com
+http://www.livejournal.com/users/joaohf/

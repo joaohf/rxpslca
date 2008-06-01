@@ -1,0 +1,24 @@
+From: Kern Sibbald <kern <at> sibbald.com>
+Subject: Re:_catalog_backend_to_IBM_DB2
+Newsgroups: gmane.comp.sysutils.backup.bacula.devel
+Date: 2007-09-05 20:53:34 GMT (29 weeks, 3 days, 6 hours and 15 minutes ago)
+Hello,
+
+I second Arno's comments, but add one note of caution.  If I am not mistaken,
+DB2 is a commercial product, so there may be licensing restrictions (both
+with the GPL used by Bacula and with IBM) on using or referencing any DB2
+client libraries that are needed in Bacula to interface to DB2.  This is
+something that is important to understand from the beginning.  If you are
+thinking of including your code in the Bacula project, you will need to read
+the Developer's Guide, which is online on the web site and then fill out and
+send in the FSFE FLA (fiduciary license agreement).  Please see the
+Developer's guide for more details.
+
+Best regards,
+
+Kern
+
+PS: A related project is to turn the current db drivers into shared objects so
+that we can support all databases with the same binary but with different
+shared objects, and if one is really clever, we could support multiple
+different SQL engines at the same time.

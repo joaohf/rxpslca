@@ -1,0 +1,13 @@
+From: Kern Sibbald <kern <at> sibbald.com>
+Subject: Re:_libdbi_backend_to_catalog_database
+Newsgroups: gmane.comp.sysutils.backup.bacula.devel
+Date: 2008-02-27 16:11:16 GMT (5 weeks, 3 days, 4 hours and 36 minutes ago)
+Hello João,
+
+I've applied your patch and it is now in the SVN.  Many thanks.
+
+Best regards,
+
+Kern
+
+

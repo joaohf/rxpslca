@@ -1,0 +1,77 @@
+From: Kern Sibbald <kern <at> sibbald.com>
+Subject: Re:_libdbi_backend_to_catalog_database
+Newsgroups: gmane.comp.sysutils.backup.bacula.devel
+Date: 2008-02-02 09:32:42 GMT (8 weeks, 17 hours and 36 minutes ago)
+On Saturday 02 February 2008 00.03:13 David Boyes wrote:
+> > Kern> When the Bacula drivers become shared objects, Bacula will be
+> > Kern> capable of working with multiple different database types
+> > Kern> simultaneously so any new implementation should include that
+> > Kern> possibility.
+>
+> I wish you luck in supporting it -- you're going to need it.
+>
+> I think the problems of using multiple databases for Bacula internals
+> and supporting multiple types of database clients are substantially
+> different, and if you want to support multiple types of databases for
+> the internals you'll either need to federate the disparate databases
+> into one view, or pick one for Bacula's internal use and stick with it.
+> I think there are serious integrity problems that you'll need to solve
+> if you want to use federated databases for Bacula internals (eg,
+> holographic table storage, and you'll need to deal with some really hard
+> failure scenarios that Just Aren't Worth It).
+
+Well, Bacula already supports multiple types of databases.  It has a single
+view of such databases, and *very* little code varies from database to
+database (unfortunately SQL is not standardized like C).  What Bacula
+currently supports is multiple databases but of a single type per Bacula
+binary.  In the future, it will evolve to multiple databases but of multiple
+types that are supported.  The details support for the SQL servers is not in
+Bacula's domain but rather what the SQL provider must support, so I don't see
+any additional support requirements here other than to ensure that it is
+clear in the job reports what database engine is being used ...
+
+>
+> Reading a simple sequential file on daemon startup and storing the value
+> in a global variable for use by the various database routines passes the
+> KISS test in my book, but YMMV. Putting it a current config file is OK
+> too. In either case, get the value at startup, stuff it somewhere and
+> pass it behind the scenes.
+
+OK, for me it is much easier to put it in the current conf file.  It is one
+define in a header table, one entry in a look up table and one entry to
+release the allocated memory -- rather trivial. Reading a new file requires
+lots of extra stuff ...
+
+>
+> > So why is this a good thing?  I've never understood the idea to have
+> > different catalogs either, or what the design goal is.
+>
+> The original purpose of using the libdbi interface is to remove the
+> details of the database implementation from the core Bacula code, which
+> allows support of a much wider range of database engines without
+> recoding for each one. Libdbi supports postgres, mysql, DB/2, Oracle,
+> Sybase, kdb, etc, etc via vendor-supplied (and supported) plugins.
+>
+> As far as different catalogs go, I've never seen a point in it. Others
+> may vary.
+
+They are very useful for improving performance and for scaling while keeping a
+single point of control (Director).
+
+>
+> > Should I be using different catalogs for each client?
+>
+> Not unless you have lots of free time to reconcile them in case of a
+> disaster.
+>
+> > Should I be
+> > using different Pools for each client?
+>
+> You can, but I wouldn't recommend it unless you have very odd retention
+> or audit requirements for different clients AND lots of spare time to
+> debug things.
+
+Good advice.
+
+Kern
+
