@@ -25,14 +25,116 @@
 % 
 % $Id$
 
-\section{Resultados e Discussão} \label{sec:resultados}
-\subsection{O projeto de SL/CA escolhido} \label{subsec:sobre}
-%Nesta seção discorreremos sobre os resultados da pesquisa e as principais discussões encontradas
-Antes de iniciarmos a discussão da experiência, é necessário posicionar o leitor nos recursos desejados e implementados no projeto de SL/CA escolhido anteriormente. Em resumo a funcionalidade desejada (vide anexo \ref{sec:anexoe}) era o suporte a uma camada de abstração no software de gerenciamento de backups de rede \textit{Bacula}. Antes do nosso patch (denomidado \patch ou simplesmente \patchshort), o software Bacula contava apenas com o suporte a SGBDs livres (Mysql, Postgresql e SQLite) nos quais eram implementados nativamente, via APIs (Application Programming Interface ou Interface de Programação de Aplicativos) padrões para acesso aos SGBDs específico, no código do Bacula. 
-
-A implementação de uma camada de abstração possibilitou a integração com outros SGBDs livres ou proprietários (vide anexo \ref{sec:anexod}) sem mudanças no código do Bacula, ou com mudanças mínimas.\footnote{Na realidade, como há diversos dialetos para a linguagem SQL implementada nos SGBDs, torna-se necessário revisar as consultas utilizadas pelo Bacula antes do mesmo suportar oficialmente outro SGBD.} Além de possibilitar um único ponto de manutenção para o código referente ao interfaceamento com SGBDs.
+\section{Resultados e Discussão} \label{sec:resultados} \label{subsec:sobre}
 
 A taxionomia (vide anexo \ref{sec:anexob}) realizada inicialmente foi deixada em segundo plano, na forma de consulta sempre que dúvidas relacionado aos artefatos do projeto surgiram. Uma espécie de guia de consulta rápida onde foi possível determinar as próximas ações para determinada atividade como por exemplo testes de regresão, submissão de patch, padrões de codificação e design.
+
+Antes de iniciarmos a discussão da experiência, é necessário posicionar o leitor nos recursos desejados e implementados no projeto de SL/CA escolhido anteriormente. Em resumo a funcionalidade desejada (vide anexo \ref{sec:anexoa}) era o suporte a uma camada de abstração no software de gerenciamento de backups de rede \textit{Bacula}. Antes do nosso patch (denomidado \patch ou simplesmente \patchshort), o software Bacula contava apenas com o suporte a SGBDs livres (Mysql, Postgresql e SQLite) nos quais eram implementados nativamente, via APIs (Application Programming Interface ou Interface de Programação de Aplicativos) padrões para acesso aos SGBDs específico, no código do Bacula. 
+
+A implementação de uma camada de abstração possibilitou a integração com outros SGBDs livres ou proprietários (vide anexo \ref{sec:anexod}) sem mudanças no código do Bacula, ou com mudanças mínimas.\footnote{Na realidade, como há diversos dialetos para a linguagem SQL implementada nos SGBDs, torna-se necessário revisar as consultas utilizadas pelo Bacula antes do mesmo suportar oficialmente outro SGBD.} Além de possibilitar um único ponto de manutenção para o código referente ao interfaceamento com SGBDs. Nas seções seguintes, apresentamos os detalhes da implementação e também o modelo de desenvolvimento utilizado.
+
+\subsection{Implementação do patch} \label{sec:anexoe}
+
+O software Bacula é um conjunto de softwares (vide figura \ref{fig:arqbacula}) no qual permitem gerenciar \textit{backups}, \textit{restores} e verificações através da rede de diversos tipos de computadores. Bacula é relativamente fácil de usar e eficiente, oferece muitos meios de armazenar os dados e recursos para gerenciá-los, procurá-los e recuperá-los. A maioria do código fonte está licenciada sob a licença GPL versão 2 e com direitos passados para a Free Software Foundation Europa.
+
+Como podemos notar na figura \ref{fig:arqbacula} o software Bacula possui um conjunto de programas nos quais podem ser instalados e executados em diferentes máquinas dentro de uma rede.
+Os principais componentes são:
+\begin{itemize}
+\item Servidor de Backup, denominado de \textit{bacula-dir}, com as funções de orquestrar toda a solução;
+\item Servidor de Armazenamento, denominado de \textit{bacula-sd}, responsável por armazenar todos os arquivos enviados pelos bacula-fd;
+\item Servidor de Arquivos, denomindado de \textit{bacula-fd}, responsável por enviar para o bacula-sd os arquivos necessários para serem armazenados provenientes dos computadores de uma rede;
+\item Estações de Administração, denomindas de \textit{console}, são utilizadas para controlar via linha de comando ou interface gráfica as operações e tarefas do Bacula;
+\item Servidor de Banco de Dados, denominado \textit{catalog database} ou banco de dados, armazena os meta-dados (características de cada arquivo).
+\end{itemize}
+
+\begin{figure}[h]
+ \centering
+ \includegraphics[scale=0.8]{../../doc/figuras/bacula-applications.eps}
+ % bacula-applications.png: 1179666x1179666 pixel, 0dpi, infxinf cm, bb=
+ \caption[Arquitetura geral do Bacula]{Arquitetura geral do sistema \\ \url{http://www.bacula.org/en/dev-manual/What_is_Bacula.html}}
+ \label{fig:arqbacula}
+\end{figure}
+
+Durante a implementação do patch \patchshort, concentramos apenas nos componentes bacula-dir e catalog database. Não tivemos a necessidade de interferir nos outros componentes do sistema pois tratavam operações nas quais não nos interessavam no momento.
+
+Para ajudar no entendimento, a figura \ref{fig:comparativo} oferece uma visão geral  antes e depois da implementação do patch. 
+
+Na figura \ref{fig:unico} notamos a utilização de um único banco de dados por binário, ou seja, a escolha de qual banco de dados utilizado é definida durante a compilação do código fonte do Bacula, no qual eram definidos os códigos necessários para construir o driver de acesso nativo via API própria de cada banco de dados. A camada sql\_\*.c utiliza as funções definidas em [banco de dados].c,  onde [banco de dados] pode ser apenas um dentre: mysql, postgresql, sqlite. Desta forma, uma vez compilado, o usuário apenas utilizaria o banco de dados escolhido. 
+Um outro ponto é o suporte aos bancos de dados limitados, ou seja, apenas para os SGBDs codificados no Bacula.
+
+Já na figura \ref{fig:dbi} observamos um novo cenário no qual uma camada de abstração (via bibliotema libdbi) e um driver (dbi.c) para fazer a interface entre a camada sql\_\*.c e a libdbi foi implementado. Basicamente para garantir dois pontos: 
+\begin{itemize}
+\item O primeiro é a independência do banco de dados a ser utilizado pelo Bacula. 
+\item O segundo ponto é a possibilidade de utilizar vários tipos de SGBDs para armazenar meta-dados de arquivos.                                                                   \end{itemize}
+Um exemplo do segundo ponto abordado é a possibilidade de realizar backups entre bancos de dados ou até mesmo a transferência de um catálogo de um banco de dados para outro completamente distinto em caso de problemas ou manutenções.
+
+\begin{figure*}[h]
+ \centerline{
+  \subfigure[Único banco de dados por binário]{
+  \includegraphics[width=5cm]{../../doc/diagramas/bacula-dir-sgbd.eps}
+  \label{fig:unico}
+  }
+  \hfil
+  \subfigure[Vários tipos de banco de dados por binário]{
+  \includegraphics[width=5cm]{../../doc/diagramas/bacula-dir-dbi.eps}
+  \label{fig:dbi}
+  }
+ } 
+ \label{fig:comparativo}
+ \caption[Comparativo de implementação]{Comparativo da implementação realizada \subref{fig:unico} e \subref{fig:dbi}}
+\end{figure*}
+
+\subsubsection{Limitações}
+
+A principal limitação encontrada é referente a existência de diversos tipos de SGBDs utilizando diferentes dialetos e recursos da linguagem SQL. Não é possível prever todos os casos. Há consultas que funcionam em todos os SGBDs e outras que são específicas e devem ser tratadas a parte. 
+
+A biblioteca libdbi oferece uma abstração para os diferentes tipos de APIs de cada fabricante de SGBDs mas a mesma não oferece nenhum suporte aos diferentes tipos de SQL utilizados por eles.
+
+Sendo assim o Bacula deve ser preparado para suportar os diferentes dialetos SQL, ou seja, para cada banco de dados temos um conjunto de SQL que devem ser adptadas e suportadas para que o SGBD seja efetivamente suportado. Isso se torna uma limitação pois necessita de uma intervenção no código para o correto funcionamento.
+
+\subsubsection{Implementação}
+
+As tarefas de criação do ambiente necessário para a implementação e definição de quais arquivos seriam necessários criar ou alterar não foram complicadas. Notamos um software bem modularizado e dividido para facilitar a manutenção e adiçaõ de novos recursos. A seguir apresentamos uma macro lista dos itens no qual foram necessário trabalhar:
+
+\begin{itemize}
+\item Alteração no arquivo \url{src/cats/cats.h}: 
+ \subitem inclusão da regra de compilação condicional HAVE\_DBI para o compilador reconhecer o código para o driver DBI
+ \subitem adaptado a estrutura de dados B\_DB, responsável pelo gerenciamento de todos os itentes relacionados a banco de dados, dentro do Bacula, bem como as definições de várias funções para a API da libdbi
+\item Alteração dos arquivos \url{src/cats/sql*.c}: incluindo a regra de compilação condicional HAVE\_DBI
+\item Criado o arquivo \url{src/cats/dbi.c} baseado no código \url{src/cats/postgresql.c}
+ \subitem tranformado e convertigo as funções presentes no arquivo src/cats/dbi.c de um código com APIs referentes ao SGBD postgresql para APIs da  biblioteca DBI. Evidente que muitas funções presentes no SGBD postgresql não seguiam a mesma lógica utilizada na biblioteca DBI. Sendo necessário estudar as documentações e códigos de ambas para entender o funcionamento e decidir se a API da biblioteca DBI atendia ou não a forma na qual o Bacula estava projetado para interagir com um SGBD. 
+\item Alterado o arquivo \url{src/dird/dird_conf.h} e \url{src/dird/dird_conf.c}
+ \subitem adicionado a opção de configuração dbdriver no qual informava ao Bacula qual driver e banco de dados será utilizado.
+\item Alterado os arquivos \url{src/autoconf/config.h.in} e \url{src/autoconf/bacula-macros/db.m4} referentes a geração do script de autoconfiguração para compilação, baseados nas disponibilidades dos requisitos da plataforma.
+\item Adaptação de todos os testes de regressão para incluir as opções de configuração para o driver DBI
+\end{itemize}
+
+\subsubsection{Timeline do desenvolvimento}
+\begin{table}[htbp]
+\begin{tabular}{|l|c|c|c|c|}
+\hline
+ & \textbf{Data} & \textbf{Submissões} & \textbf{Data Integração} & \textbf{Revision} \\ \hline
+\multicolumn{ 1}{|c|}{\textbf{Exploração Arquitetural}} & 2007-12-07 &  &  &  \\ \cline{ 2- 5}
+\multicolumn{ 1}{|l|}{} & 2008-01-11 &  &  &  \\ \hline
+\multicolumn{ 1}{|c|}{\textbf{Desenvolvimento}} & 2008-01-18 &  &  &  \\ \cline{ 2- 5}
+\multicolumn{ 1}{|l|}{} &  & 2008-02-01 & 2008-02-02 & 6358 \\ \cline{ 2- 5}
+\multicolumn{ 1}{|l|}{} &  & 2008-02-12 & 2008-02-13 & 6413 \\ \cline{ 2- 5}
+\multicolumn{ 1}{|l|}{} &  & 2008-02-19 & 2008-02-22 & 6464 \\ \cline{ 2- 5}
+\multicolumn{ 1}{|l|}{} &  & 2008-02-21 & 2008-02-27 & 6498 \\ \cline{ 2- 5}
+\multicolumn{ 1}{|l|}{} &  & 2008-02-25 & 2008-04-15 & 6825 \\ \cline{ 2- 5}
+\multicolumn{ 1}{|l|}{} &  & 2008-03-17 & 2008-04-15 & 6826 \\ \cline{ 2- 5}
+\multicolumn{ 1}{|l|}{} &  & 2008-04-09 & 2008-04-09 & 6817 \\ \cline{ 2- 5}
+\multicolumn{ 1}{|l|}{} &  & 2008-04-14 & 2008-04-15 & 6818 \\ \cline{ 2- 5}
+\multicolumn{ 1}{|l|}{} &  & 2008-04-27 & 2008-04-27 & 6874 \\ \cline{ 2- 5}
+\multicolumn{ 1}{|l|}{} & 2008-05-02 &  &  &  \\ \hline
+ &  &  &  &  \\ \hline
+ & \textbf{Orçadas} & \textbf{Trabalhadas} &  &  \\ \hline
+\textbf{Exploração Arquitetural:} & 64h & 59.89h &  &  \\ \hline
+\textbf{Desenvolvimento:} & 168h & 118h &  &  \\ \hline
+\end{tabular}
+\caption{Timeline}
+\label{Timeline}
+\end{table}
 
 \subsection{Modelo de desenvolvimento utilizado durante o experimento} 
 
@@ -63,7 +165,7 @@ Acreditamos que não havendo um framework de testes, no qual realizamos diversos
 %\textit{Como planejar os melhoramento e qual a melhor forma de planeja-los?}\\
 Após a elaboração da classificação, de acordo com o anexo \ref{sec:anexob}, iniciamos os experimentos elaborando os requisitos necessários (vide anexo \ref{sec:anexoa:baculalibdbi}) para as melhorias objetivadas para o projeto.
 
-Basicamente tentamos responder os seguintes questionamentos: \textit{Oque?}, realmente precisamos desta funcionalidade; \textit{Porque?}, quais os fundamentos técnicos e benefícios para o projeto implementando esta funcionalidade; \textit{Como?}, quais os artefatos necessários e como implementá-los (vide anexo \ref{sec:anexoa:featurereq}). Evidente que para a última questão um conhecimento maior sobre o software em si foi necessário antes de aventurarmos em sugestionar mudanças para a comunidade do projeto. Entretanto a dificuldade relacionada em argumentar como a nova funcionalidade desenvolvida se encaixou no software foi minimizada via uma \textit{Exploração Arquitetural}, demonstrada adiante.
+Basicamente tentamos responder os seguintes questionamentos: \textit{O que?}, realmente precisamos desta funcionalidade; \textit{Porque?}, quais os fundamentos técnicos e benefícios para o projeto implementando esta funcionalidade; \textit{Como?}, quais os artefatos necessários e como implementá-los (vide anexo \ref{sec:anexoa:featurereq}). Evidente que para a última questão um conhecimento maior sobre o software em si foi necessário antes de aventurarmos em sugestionar mudanças para a comunidade do projeto. Entretanto a dificuldade relacionada em argumentar como a nova funcionalidade desenvolvida se encaixou no software foi minimizada via uma \textit{Exploração Arquitetural}, demonstrada adiante.
 
 A melhor definição de Exploração Arquitetural (EA) é encontrada dentro do modelo de desenvolvimento XP no qual também possui uma fase exploratória e pode ser definido, segundo \cite[página 36]{procdesenv}: \textit{``A fase de exploração é anterior à construção do sistema. Nela, investigações de possíveis soluções são feitas e verifica-se a viabilidade de tais soluções... Os clientes são consultados e trazidos para dentro da equipe... Os programadores são responsáveis por fazer experimentos com a possível tecnologia e infra-estrutura a ser escolhida...''}. No contexto do trabalho, entendemos que ``clientes'' são os desenvolvedores do núcleo do projeto com uma visão mais crítica das modificações propostas e ``programadores'' são os contribuidores do patch. Asssim a visão do XP se encaixa perfeitamente para a experiência.
 

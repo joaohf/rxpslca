@@ -27,8 +27,24 @@
 
 \section{Conclusão} \label{sec:conclusao}
 
+Pequenos e recentes projetos de SL/CA não possuem um formalismo para o processamento de contribuições. Enquanto que projetos maduros possuem processos desenvolvidos ao longo da vida do projeto. Um fluxo básico, e geralmente, encontrado em todos os projetos de SL/CA é proposto por \cite{preliminary} e é composto pelas etapas abaixo:
+
+\begin{enumerate}
+ \item Alguém reporta um bug ou solicita uma nova funcionalidade;
+ \item O item se torna prioridade (muitos usuários comentam, endoçam ou o é realmente crítico);
+ \item Há uma discussão sobre o item \label{enu:discussao};
+ \item Alguém posta um patch, levantando uma incerteza sobre o patch \label{enu:postapatch};
+ \item Desenvolvedores testam e comentam o patch, caso ele resolva o problema;
+ \item O patch é revisto e formalmente testado;
+ \item Quando o patch é considerado aceito, ele é integrado e liberado na próxima versão.
+\end{enumerate}
+
+É importante ressaltar os papéis encontrados neste processo no qual variam de: relator de bug, contribuidor, testador, revisor e integrador (\textit{committer}\footnote{Desenvolvedor responsável por integrar os códigos no repositório. Em algumas comunidades os repositórios de controle de versão possuem políticas severas em quais são os desenvolvedores com permissões para integrar códigos.}). A mesma pessoa pode exercer muitos papeis ao mesmo tempo (item \ref{enu:discussao}).
+
+Nossa discussão esteve em torno dos itens \ref{enu:discussao} e \ref{enu:postapatch} das etapas definidas acima. Após todo o levantamento citado, demonstramos as experiências imersos na comunidade de SL/CA escolhida a fim de capturar e apresentar maiores detalhes sobre o processo de contribuição.
+
 % Finalização das idéias
-Enfim, ao longo das experiências procuramos demonstrar uma visão de como um usuário pode se tornar desenvolvedor de um projeto de SL/CA. Expomos a nossa experiência e resultados práticos com o objetivo de desmistificar o desenvolvimento de SL/CA como algo aparentemente realizado por desenvolvedores herméticos e altamente técnicos.
+Enfim, procuramos demonstrar uma visão de como um usuário, com perfil de desenvolvedor, pode se tornar desenvolvedor de um projeto de SL/CA. Expomos a nossa experiência e resultados práticos com o objetivo de desmistificar o desenvolvimento de SL/CA como algo aparentemente realizado por desenvolvedores herméticos e altamente técnicos.
 
 Constatamos que o desenvolvimento pode ser realizado por qualquer usuário com conhecimentos básicos e interação necessára para envolvimento nas comunidade de SL/CA. E que a vivência nestas experiências são altamente benéficas para ambas as partes, ou seja, para o usuário: que pode ter contato com ferramentas, técnicas, processos e pessoas ajudando em seu desenvolvimento pessoal ou profissional e para a comunidade de SL/CA: se beneficiando da colaboração de uma melhoria em determinada ferramenta, tradução, suporte e processos.
 
