@@ -57,12 +57,12 @@ Os principais componentes são:
 
 Durante a implementação do patch \patchshort, concentramos apenas nos componentes bacula-dir e catalog database. Não tivemos a necessidade de interferir nos outros componentes do sistema pois tratavam operações nas quais não nos interessavam no momento.
 
-Para ajudar no entendimento, a figura \ref{fig:comparativo} oferece uma visão geral  antes e depois da implementação do patch. 
+Para ajudar no entendimento, as figuras \ref{fig:unico} e \ref{fig:dbi} oferecem uma visão geral antes e depois da implementação do patch. 
 
-Na figura \ref{fig:unico} notamos a utilização de um único banco de dados por binário, ou seja, a escolha de qual banco de dados utilizado é definida durante a compilação do código fonte do Bacula, no qual eram definidos os códigos necessários para construir o driver de acesso nativo via API própria de cada banco de dados. A camada sql\_\*.c utiliza as funções definidas em [banco de dados].c,  onde [banco de dados] pode ser apenas um dentre: mysql, postgresql, sqlite. Desta forma, uma vez compilado, o usuário apenas utilizaria o banco de dados escolhido. 
+Na figura \ref{fig:unico} notamos a utilização de um único banco de dados por binário, ou seja, a escolha de qual banco de dados utilizado é definida durante a compilação do código fonte do Bacula, no qual eram definidos os códigos necessários para construir o driver de acesso nativo via API própria de cada banco de dados. A camada sql\_$\ast$.c utiliza as funções definidas em [banco de dados].c,  onde [banco de dados] pode ser apenas um dentre: mysql, postgresql, sqlite. Desta forma, uma vez compilado, o usuário apenas utilizaria o banco de dados escolhido. 
 Um outro ponto é o suporte aos bancos de dados limitados, ou seja, apenas para os SGBDs codificados no Bacula.
 
-Já na figura \ref{fig:dbi} observamos um novo cenário no qual uma camada de abstração (via bibliotema libdbi) e um driver (dbi.c) para fazer a interface entre a camada sql\_\*.c e a libdbi foi implementado. Basicamente para garantir dois pontos: 
+Já na figura \ref{fig:dbi} observamos um novo cenário no qual uma camada de abstração (via biblioteca libdbi) e um driver (dbi.c) para fazer a interface entre a camada sql\_$\ast$.c e a libdbi foi implementado. Basicamente para garantir dois pontos: 
 \begin{itemize}
 \item O primeiro é a independência do banco de dados a ser utilizado pelo Bacula. 
 \item O segundo ponto é a possibilidade de utilizar vários tipos de SGBDs para armazenar meta-dados de arquivos.                                                                   \end{itemize}
@@ -79,14 +79,14 @@ Um exemplo do segundo ponto abordado é a possibilidade de realizar backups entr
   \includegraphics[width=5cm]{../../doc/diagramas/bacula-dir-dbi.eps}
   \label{fig:dbi}
   }
- } 
- \label{fig:comparativo}
+  \label{fig:comparativo}
+ }  
  \caption[Comparativo de implementação]{Comparativo da implementação realizada \subref{fig:unico} e \subref{fig:dbi}}
 \end{figure*}
 
 \subsubsection{Limitações}
 
-A principal limitação encontrada é referente a existência de diversos tipos de SGBDs utilizando diferentes dialetos e recursos da linguagem SQL. Não é possível prever todos os casos. Há consultas que funcionam em todos os SGBDs e outras que são específicas e devem ser tratadas a parte. 
+A principal limitação encontrada foi referente a existência de diversos tipos de SGBDs utilizando diferentes dialetos e recursos da linguagem SQL. Não é possível prever todos os casos. Há consultas que funcionam em todos os SGBDs e outras que são específicas e devem ser tratadas a parte. 
 
 A biblioteca libdbi oferece uma abstração para os diferentes tipos de APIs de cada fabricante de SGBDs mas a mesma não oferece nenhum suporte aos diferentes tipos de SQL utilizados por eles.
 
@@ -109,36 +109,9 @@ As tarefas de criação do ambiente necessário para a implementação e defini�
 \item Adaptação de todos os testes de regressão para incluir as opções de configuração para o driver DBI
 \end{itemize}
 
-\subsubsection{Timeline do desenvolvimento}
-\begin{table}[htbp]
-\begin{tabular}{|l|c|c|c|c|}
-\hline
- & \textbf{Data} & \textbf{Submissões} & \textbf{Data Integração} & \textbf{Revision} \\ \hline
-\multicolumn{ 1}{|c|}{\textbf{Exploração Arquitetural}} & 2007-12-07 &  &  &  \\ \cline{ 2- 5}
-\multicolumn{ 1}{|l|}{} & 2008-01-11 &  &  &  \\ \hline
-\multicolumn{ 1}{|c|}{\textbf{Desenvolvimento}} & 2008-01-18 &  &  &  \\ \cline{ 2- 5}
-\multicolumn{ 1}{|l|}{} &  & 2008-02-01 & 2008-02-02 & 6358 \\ \cline{ 2- 5}
-\multicolumn{ 1}{|l|}{} &  & 2008-02-12 & 2008-02-13 & 6413 \\ \cline{ 2- 5}
-\multicolumn{ 1}{|l|}{} &  & 2008-02-19 & 2008-02-22 & 6464 \\ \cline{ 2- 5}
-\multicolumn{ 1}{|l|}{} &  & 2008-02-21 & 2008-02-27 & 6498 \\ \cline{ 2- 5}
-\multicolumn{ 1}{|l|}{} &  & 2008-02-25 & 2008-04-15 & 6825 \\ \cline{ 2- 5}
-\multicolumn{ 1}{|l|}{} &  & 2008-03-17 & 2008-04-15 & 6826 \\ \cline{ 2- 5}
-\multicolumn{ 1}{|l|}{} &  & 2008-04-09 & 2008-04-09 & 6817 \\ \cline{ 2- 5}
-\multicolumn{ 1}{|l|}{} &  & 2008-04-14 & 2008-04-15 & 6818 \\ \cline{ 2- 5}
-\multicolumn{ 1}{|l|}{} &  & 2008-04-27 & 2008-04-27 & 6874 \\ \cline{ 2- 5}
-\multicolumn{ 1}{|l|}{} & 2008-05-02 &  &  &  \\ \hline
- &  &  &  &  \\ \hline
- & \textbf{Orçadas} & \textbf{Trabalhadas} &  &  \\ \hline
-\textbf{Exploração Arquitetural:} & 64h & 59.89h &  &  \\ \hline
-\textbf{Desenvolvimento:} & 168h & 118h &  &  \\ \hline
-\end{tabular}
-\caption{Timeline}
-\label{Timeline}
-\end{table}
-
 \subsection{Modelo de desenvolvimento utilizado durante o experimento} 
 
-Durante toda a experiência, como não tinhamos muito bem definido os requisitos necessários para a implementação. E tão pouco um conhecimento suficiente grande do código em que iriamos modificar, foi necessário utilizar um modelo de desenvolvimento no qual fosse permitido definir um mínimo de objetivos e logo iniciar o ciclo de desenvolvimento, após uma fase de \textit{Exploração Arquitetural}. 
+Durante toda a experiência, como não tinhamos muito bem definido os requisitos necessários para a implementação. E tão pouco um conhecimento suficiente grande do código em que iriamos modificar, foi necessário utilizar um modelo de desenvolvimento no qual fosse permitido definir um mínimo de objetivos e logo iniciar o ciclo de desenvolvimento, após uma fase de \textit{Exploração Arquitetural} (EA). 
 
 Atrelando ao fato de que o projeto Bacula estabelece frameworks de testes e recomendações explícitas para a utilização sempre após qualquer alteração no código fonte, e tendo em consideração que uma das premissas para a utilização do modelo em vista era uma forma de validação da implementação rapidamente para que nada fosse alterado de forma a quebrar as outras funcionalidade existentes. Achamos pertinente utilizar o modelo de \textit{Programação ou Desenvolvimento Exploratório} (vide figura \ref{fig:exploratoria}). 
 
@@ -152,7 +125,7 @@ Em \cite[página 31]{engenharia1} define como sendo: \textit{``O modelo de progr
  \label{fig:exploratoria}
 \end{figure}
 
-Acreditamos que não havendo um framework de testes, no qual realizamos diversos testes de regressão no projeto, não seriamos capazes de implementar as modificações propostas. Devido as chances de quebrar toda a consistência dos dados do software. Do ponto de vista do desenvolvedor, testes automáticos encorajam o desenvolvimento e aumentam o processo de \textit{refactoring}\footnote{Processo de constantes melhorias no design e código do software}\cite[página 203]{producing}.
+Acreditamos que não havendo um framework de testes, no qual realizamos diversos testes de regressão no projeto, não seriamos capazes de implementar as modificações propostas. Devido as chances de quebrar toda a consistência dos dados do software. Do ponto de vista do desenvolvedor, testes automáticos encorajam o desenvolvimento e aumentam o processo de \textit{refactoring}\footnote{Processo de constantes melhorias no design e código do software} \cite[página 203]{producing}.
 
 % Exploratory programming is an important part of the software engineering cycle: when a domain is not very well understood or open-ended, or it's not clear what algorithms and data structures might be needed for an implementation, it's useful to be able to interactively develop and debug a program without having to go through the usual constraints of the edit-compile-run-debug cycle.
 %  
@@ -174,7 +147,7 @@ A melhor definição de Exploração Arquitetural (EA) é encontrada dentro do m
 
 Enfim, a Exploração Arquitetural possibilitou as atividades abaixo relacionadas e um conhecimento maior sobre o projeto de SL/CA e sua engenharia. 
 \begin{description}
-\item [Testar as possibilidades] ponto em que o desenvolver percebe o mal funcionamento, necessidade de manutenção ou implementação de uma nova fucionalidade.
+\item [Testar as possibilidades] ponto em que o desenvolver percebe o mal funcionamento, necessidade de manutenção ou implementação de uma nova funcionalidade.
 \item [Documentar as necessidades] para levantamento e descrição dos requisitos, escopo inicial e analise de como fazer a modificação (vide anexo \ref{sec:anexoa}).
 \item [Levantar feedback dos desenvolvedores] abrindo discuções formalmente, via lista de discussão ou email privado com os desenvolvedores. É importante nesta fase a argumentação técnica das modificações a serem realizadas e evidenciar os benefícios para o projeto. Muitas vezes é a partir deste ponto que a modificação pode ou não dar certo (vide anexo \ref{sec:anexod})
 \item [Iniciar experimentações]: implementação dos requitisos e testes. Neste ponto os testes são fundamentais pois as novas funções ou modificações não devem quebrar o código já existente.
@@ -217,7 +190,7 @@ Mesmo que o contribuidor não conheça a fundo o projeto objetivado, através da
 
 \subsection{Ciclo de desenvolvimento}
 
-Após o período necessário para entendimento do projeto Bacula, iniciamos as primeiras experiências na implementação do patch. Já havíamos traçado os planos em discussões com desenvolvedores de quais arquivos seriam necessários trabalhar e os pontos de maior cautela. Para maiores detalhes relacionado a implementação do patch (código e arquitetura) vide anexo \ref{sec:anexoe}.
+Após o período necessário para entendimento do projeto Bacula, iniciamos as primeiras experiências na implementação do patch. Já havíamos traçado os planos em discussões com desenvolvedores de quais arquivos seriam necessários trabalhar e os pontos de maior cautela.
 
 \subsubsection{Padrões de projetos identificados}
 
@@ -263,7 +236,33 @@ Abaixo descrevemos as atividades:
 
 \subsubsection{Submissão do patch}
 
-Após o período de desenvolvimento, no qual não foi finalizado até a execução satisfatória de todos os testes de regressão do projeto Bacula, o patch \patchshort foi submetido na lista de desenvolvimento. 
+Após o período de desenvolvimento, no qual não foi finalizado até a execução satisfatória de todos os testes de regressão do projeto Bacula, o patch \patchshort foi submetido na lista de desenvolvimento. Na tabela \ref{Timeline} podemos notar a relação entre a duração da fase de EA e Desenvolvimento, a submissão do patch na lista de desenvolvedores e a integração do código submetido no repositório de controle de versão. 
+
+\begin{table}[h]
+\begin{tabular}{|l|c|c|c|c|}
+\hline
+ & \textbf{Data} & \textbf{Submissões} & \textbf{Data Integração} & \textbf{Revision} \\ \hline
+\multicolumn{ 1}{|c|}{\textbf{Exploração Arquitetural}} & 2007-12-07 &  &  &  \\ \cline{ 2- 5}
+\multicolumn{ 1}{|l|}{} & 2008-01-11 &  &  &  \\ \hline
+\multicolumn{ 1}{|c|}{\textbf{Desenvolvimento}} & 2008-01-18 &  &  &  \\ \cline{ 2- 5}
+\multicolumn{ 1}{|l|}{} &  & 2008-02-01 & 2008-02-02 & 6358 \\ \cline{ 2- 5}
+\multicolumn{ 1}{|l|}{} &  & 2008-02-12 & 2008-02-13 & 6413 \\ \cline{ 2- 5}
+\multicolumn{ 1}{|l|}{} &  & 2008-02-19 & 2008-02-22 & 6464 \\ \cline{ 2- 5}
+\multicolumn{ 1}{|l|}{} &  & 2008-02-21 & 2008-02-27 & 6498 \\ \cline{ 2- 5}
+\multicolumn{ 1}{|l|}{} &  & 2008-02-25 & 2008-04-15 & 6825 \\ \cline{ 2- 5}
+\multicolumn{ 1}{|l|}{} &  & 2008-03-17 & 2008-04-15 & 6826 \\ \cline{ 2- 5}
+\multicolumn{ 1}{|l|}{} &  & 2008-04-09 & 2008-04-09 & 6817 \\ \cline{ 2- 5}
+\multicolumn{ 1}{|l|}{} &  & 2008-04-14 & 2008-04-15 & 6818 \\ \cline{ 2- 5}
+\multicolumn{ 1}{|l|}{} &  & 2008-04-27 & 2008-04-27 & 6874 \\ \cline{ 2- 5}
+\multicolumn{ 1}{|l|}{} & 2008-05-02 &  &  &  \\ \hline
+ &  &  &  &  \\ \hline
+ & \textbf{Orçadas} & \textbf{Trabalhadas} &  &  \\ \hline
+\textbf{Exploração Arquitetural:} & 64h & 59.89h &  &  \\ \hline
+\textbf{Desenvolvimento:} & 168h & 118h &  &  \\ \hline
+\end{tabular}
+\caption{Timeline}
+\label{Timeline}
+\end{table}
 
 Mediante as regras de licenciamento do projeto, de acordo com anexo \ref{sec:anexoc}, o patch só pôde ser aceito e integrado no repositório do projeto após o envio por carta convencional contendo a doação formalmente do código escrito para o projeto. Segundo os desenvolvedores esta é uma medida de proteção para evitar problemas legais referentes a patentes de software. 
 Após o recebimento\footnote{A carta foi destinada a \textit{Free Software Foundation Europa} (\url{http://www.fsfeurope.org/}) mais especificadamente para o projeto conhecido como \textit{Freedom Task Force} (\url{http://www.fsfeurope.org/projects/ftf/about.pt.html})} da carta, o código pôde ser integrado.
